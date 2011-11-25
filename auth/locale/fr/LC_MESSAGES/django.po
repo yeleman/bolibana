@@ -1,0 +1,83 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: bolibana_auth\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-07-14 19:07+0000\n"
+"PO-Revision-Date: 2011-07-14 19:07-0000\n"
+"Last-Translator: renaud gaudin <reg@yeleman.com>\n"
+"Language-Team: \n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1)\n"
+"X-Poedit-Bookmarks: 9,-1,-1,-1,-1,-1,-1,-1,-1,-1\n"
+"X-Poedit-Language: French\n"
+"X-Poedit-KeywordsList: _;ugettext;ugettext_lazy\n"
+"X-Poedit-Basepath: ../../../\n"
+"X-Poedit-SearchPath-0: /home/reg/src/bolibana/bolibana_auth\n"
+
+#: models/Access.py:22
+#: models/Access.py:23
+#: models/Provider.py:37
+msgid "Access"
+msgstr "Accès"
+
+#: models/Access.py:25
+#: models/Role.py:15
+msgid "Role"
+msgstr "Role"
+
+#: models/Access.py:38
+#, python-format
+msgid "%(role)s on %(target)s"
+msgstr "%(role)s à %(target)s"
+
+#: models/Permission.py:15
+msgid "Permission"
+msgstr "Permission"
+
+#: models/Permission.py:16
+#: models/Role.py:21
+msgid "Permissions"
+msgstr "Permissions"
+
+#: models/Permission.py:18
+#: models/Role.py:19
+msgid "Slug"
+msgstr "Code"
+
+#: models/Provider.py:28
+msgid "Provider"
+msgstr "Participant"
+
+#: models/Provider.py:29
+msgid "Providers"
+msgstr "Participants"
+
+#: models/Provider.py:31
+msgid "User"
+msgstr "Utilisateur"
+
+#: models/Provider.py:35
+msgid "Phone Number"
+msgstr "Nº téléphone"
+
+#: models/Provider.py:62
+#, python-format
+msgid "%(name)s (%(access)s)"
+msgstr "%(name)s (%(access)s)"
+
+#: models/Role.py:16
+msgid "Roles"
+msgstr "Roles"
+
+#: models/Role.py:18
+msgid "Name"
+msgstr "Nom"
+
