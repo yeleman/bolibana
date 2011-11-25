@@ -9,8 +9,8 @@ from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _, ugettext
 import reversion
 
-from bolibana.models import Provider
-from bolibana.models import Period
+#from bolibana.models import Provider
+#from bolibana.models import Period
 
 
 class UnValidatedManager(models.Manager):
@@ -79,12 +79,12 @@ class Report(models.Model):
                                verbose_name=_(u"Period"))
     entity = models.ForeignKey('Entity', related_name='%(app_label)s_%(class)s_reports', \
                                verbose_name=_(u"Entity"))
-    created_by = models.ForeignKey(Provider, \
+    created_by = models.ForeignKey('Provider', \
                                    related_name='%(app_label)s_%(class)s_reports', \
                                    verbose_name=_(u"Created By"))
     created_on = models.DateTimeField(auto_now_add=True, \
                                       verbose_name=_(u"Created On"))
-    modified_by = models.ForeignKey(Provider, \
+    modified_by = models.ForeignKey('Provider', \
                                     null=True, blank=True, \
                                     verbose_name=_(u"Modified By"))
     modified_on = models.DateTimeField(auto_now=True, \

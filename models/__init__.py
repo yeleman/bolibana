@@ -6,3 +6,8 @@ from Period import Period, MonthPeriod, YearPeriod
 from Entity import Entity
 from EntityType import EntityType
 from Report import Report
+from Access import Access
+from Options import Options
+from Permission import Permission
+from Provider import Provider
+from Role import Role
