@@ -6,8 +6,8 @@ from django.contrib import messages
 from django.shortcuts import redirect
 from django.utils.translation import ugettext as _
 
-from bolibana_tools.http import Http403
-from bolibana_tools.utils import provider_can_or_403
+from bolibana.web.http import Http403
+from bolibana.tools.utils import provider_can_or_403
 
 
 def provider_required(target):

@@ -12,8 +12,8 @@ from django.core.urlresolvers import reverse
 
 from django.contrib.humanize.templatetags.humanize import intcomma
 
-from bolibana_reporting.models import Report, Entity
-from bolibana_tools.utils import clean_phone_number
+from bolibana.models import Report, Entity
+from bolibana.tools.utils import clean_phone_number
 
 locale.setlocale(locale.LC_ALL, '')
 

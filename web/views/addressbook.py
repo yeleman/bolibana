@@ -7,7 +7,7 @@ from django.utils.translation import ugettext as _, ugettext_lazy
 from django import forms
 from mptt.fields import TreeNodeChoiceField
 
-from bolibana.auth.models import Role, Provider
+from bolibana.models import Role, Provider
 from bolibana.reporting.models import Entity
 
 

@@ -9,8 +9,8 @@ from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _, ugettext
 import reversion
 
-from bolibana.auth.models import Provider
-from bolibana.reporting.models import Period
+from bolibana.models import Provider
+from bolibana.models import Period
 
 
 class UnValidatedManager(models.Manager):

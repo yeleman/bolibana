@@ -5,7 +5,7 @@
 from functools import wraps
 from inspect import getmembers, ismethod
 
-from bolibana.reporting.models.Options import Options
+from bolibana.models.Options import Options
 
 
 def blank(func):

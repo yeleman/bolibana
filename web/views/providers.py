@@ -12,11 +12,11 @@ from django.utils.translation import ugettext as _, ugettext_lazy
 from django.views.generic import ListView
 from mptt.fields import TreeNodeChoiceField
 
-from bolibana.auth.models import Role, Provider, Access
+from bolibana.models import Role, Provider, Access
 from bolibana.auth.utils import username_from_name, random_password
-from bolibana.reporting.models import Entity
+from bolibana.models import Entity
 from bolibana.tools.utils import send_email, full_url, clean_phone_number
-from bolibana.tools.decorators import provider_permission
+from bolibana.web.decorators import provider_permission
 
 logger = logging.getLogger(__name__)
 

@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.shortcuts import render, RequestContext, redirect
 from django.utils.translation import ugettext as _, ugettext_lazy
 
-from bolibana.tools.decorators import provider_required
+from bolibana.web.decorators import provider_required
 
 
 class ProviderForm(forms.Form):

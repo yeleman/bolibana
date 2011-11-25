@@ -14,7 +14,7 @@ from django.utils.translation import ugettext as _
 from django.contrib.sites.models import Site, get_current_site
 from django.contrib.auth.models import ContentType
 
-from bolibana_auth.models import Access, Role
+from bolibana.models import Access, Role
 
 proverbs = [
     ('bm', u"dɔlɔ tɛ bɔ bɛɛ ka fɔ la", \
@@ -175,7 +175,7 @@ def clean_phone_number(number):
 
 def provider_can(permission, provider, entity=None):
     """ bolean if(not) provider has permission on entity or descendants """
-    from bolibana_auth.models import Permission
+    from bolibana.models import Permission
 
     for access in provider.access.all():
         if access.role.permissions.filter(slug=permission).count() > 0:
@@ -193,7 +193,7 @@ def provider_can(permission, provider, entity=None):
 
 def provider_can_or_403(permission, provider, entity):
     """ returns provider_can() or raise Http403 """
-    from bolibana_tools.http import Http403
+    from bolibana.web.http import Http403
     if provider_can(permission, provider, entity):
         return True
     else:
@@ -239,7 +239,7 @@ def generate_receipt(instance, fix='', add_random=False, format=None):
             D: sent day of week """
 
         import random
-        from bolibana_reporting.models import EntityType
+        from bolibana.models import EntityType
 
         if add_random:
             rand_part = random.randint(0, 9).__str__()

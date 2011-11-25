@@ -4,7 +4,7 @@
 
 from django.conf import settings
 
-from bolibana_tools.utils import get_level_for, random_proverb
+from bolibana.tools.utils import get_level_for, random_proverb
 
 
 def add_provider(request):

@@ -10,8 +10,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.translation import ugettext as _
 from django.views.generic import ListView
 
-from bolibana.reporting.models import Entity
-from bolibana.tools.decorators import provider_permission
+from bolibana.models import Entity
+from bolibana.web.decorators import provider_permission
 
 logger = logging.getLogger(__name__)
 

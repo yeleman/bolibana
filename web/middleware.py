@@ -8,7 +8,7 @@ from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseForbidden, HttpResponseNotFound
 from django.views.decorators.csrf import requires_csrf_token
 from django.http import Http404
-from bolibana_tools.http import Http403
+from bolibana.web.http import Http403
 
 
 @requires_csrf_token
