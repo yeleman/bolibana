@@ -51,6 +51,9 @@ class EditProviderForm(forms.Form):
     phone_number = forms.CharField(max_length=12, required=False, \
                                    label=ugettext_lazy(u"Phone Number"))
 
+    phone_number_extra = forms.CharField(max_length=12, required=False, \
+                                   label=ugettext_lazy(u"Phone Number"))
+
     role = forms.ChoiceField(label=ugettext_lazy(u"Role"), \
                              choices=[(role.slug, role.name) \
                                       for role \
@@ -76,6 +79,15 @@ class EditProviderForm(forms.Form):
                                         % {'provider': Provider.objects\
                                                .get(phone_number=phone_number)\
                                                .name_access()})
+        return phone_number
+
+    def clean_phone_number_extra(self):
+        ind, clean_num = clean_phone_number(self.cleaned_data\
+                                                .get('phone_number_extra'))
+        if not ind:
+            ind = '223'
+        phone_number = '+%s%s' % (ind, clean_num) if clean_num else None
+
         return phone_number
 
     def clean_entity(self):
@@ -136,6 +148,8 @@ def add_edit_user(request, user_id=None, template='add_edit_provider.html'):
                and Provider.objects.filter(phone_number=phone_number)\
                                    .exclude(id=user_id).count() == 0:
                 provider.phone_number = phone_number
+            provider.phone_number_extra = \
+                                    form.cleaned_data.get('phone_number_extra')
             provider.save()
             messages.success(request, _(u"Profile details updated."))
 

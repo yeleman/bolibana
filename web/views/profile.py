@@ -20,6 +20,8 @@ class ProviderForm(forms.Form):
                              label=ugettext_lazy(u"E-mail Address"))
     phone_number = forms.CharField(max_length=12, required=False, \
                                    label=ugettext_lazy(u"Phone Number"))
+    phone_number_extra = forms.CharField(max_length=12, required=False, \
+                                   label=ugettext_lazy(u"Phone Number"))
 
 
 class ProviderPasswordForm(forms.Form):
@@ -55,6 +57,8 @@ def edit_profile(request, template='edit_profile.html'):
             provider.last_name = form.cleaned_data.get('last_name')
             provider.email = form.cleaned_data.get('email')
             provider.phone_number = form.cleaned_data.get('phone_number')
+            provider.phone_number_extra = \
+                                    form.cleaned_data.get('phone_number_extra')
             provider.save()
             messages.success(request, _(u"Profile details updated."))
             return redirect('index')
