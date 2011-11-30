@@ -33,6 +33,9 @@ class Provider(models.Model):
     phone_number = models.CharField(max_length=12, unique=True, \
                                     null=True, blank=True, \
                                     verbose_name=_(u"Phone Number"))
+    phone_number_extra = models.CharField(max_length=12, \
+                                    null=True, blank=True, \
+                                    verbose_name=_(u"Phone Number"))
     access = models.ManyToManyField('Access', null=True, blank=True, \
                                     verbose_name=_(u"Access"))
 

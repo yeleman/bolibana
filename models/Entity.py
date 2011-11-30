@@ -18,6 +18,9 @@ class Entity(MPTTModel):
     slug = models.SlugField(_(u"Slug"), max_length=15, unique=True)
     type = models.ForeignKey('EntityType', related_name='entities', \
                              verbose_name=_(u"Type"))
+    phone_number = models.CharField(max_length=12, unique=True, \
+                                    null=True, blank=True, \
+                                    verbose_name=_(u"Phone Number"))
     parent = TreeForeignKey('self', null=True, blank=True, \
                                                      related_name='children', \
                                                      verbose_name=_(u"Parent"))
