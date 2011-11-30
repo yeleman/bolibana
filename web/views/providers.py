@@ -91,9 +91,9 @@ class EditProviderForm(forms.Form):
         return phone_number
 
     def clean_entity(self):
-        if self.cleaned_data.get('role') in ('antim', 'partners', 'pnlp'):
-            return 1
-        else:
+        if self.cleaned_data.get('role') in ('antim', 'pnlp'):
+            return Entity.objects.filter(level=0)[0]
+        elif self.cleaned_data.get('role') != 'partners':
             if self.cleaned_data.get('entity').type.slug \
                != self.cleaned_data.get('role'):
                 raise forms.ValidationError(_(u"Entity is not valid " \
