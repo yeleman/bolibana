@@ -2,9 +2,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PNLP2011\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-07-14 19:07+0000\n"
-"PO-Revision-Date: 2011-07-14 19:08-0000\n"
-"Last-Translator: renaud gaudin <reg@yeleman.com>\n"
+"POT-Creation-Date: 2011-12-01 11:52+0000\n"
+"PO-Revision-Date: 2011-12-01 11:52-0000\n"
+"Last-Translator: reg <reg@yeleman.com>\n"
 "Language-Team: \n"
 "Language: \n"
 "MIME-Version: 1.0\n"
@@ -17,13 +17,22 @@ msgstr ""
 "X-Poedit-SourceCharset: utf-8\n"
 "X-Poedit-SearchPath-0: /home/reg/src/bolibana\n"
 
-#: reporting/excel.py:188
-#, python-format
-msgid "%(data)s is not a valid data for %(field)s"
-msgstr "%(data)s n'est pas une donnée valide pour %(field)s"
+#: models/Access.py:23 models/Access.py:24 models/Provider.py:40
+msgid "Access"
+msgstr "Accès"
 
-#: models/Entity.py:14
-#: models/Report.py:68
+#: models/Access.py:26 models/Role.py:15 web/views/addressbook.py:15
+#: web/views/providers.py:57
+msgid "Role"
+msgstr "Role"
+
+#: models/Access.py:40
+#, python-format
+msgid "%(role)s on %(target)s"
+msgstr "%(role)s à %(target)s"
+
+#: models/Entity.py:14 models/Report.py:81 web/views/addressbook.py:21
+#: web/views/providers.py:64
 msgid "Entity"
 msgstr "Entité"
 
@@ -31,32 +40,35 @@ msgstr "Entité"
 msgid "Entities"
 msgstr "Entités"
 
-#: models/Entity.py:17
-#: models/EntityType.py:16
+#: models/Entity.py:17 models/EntityType.py:16 models/Role.py:18
 msgid "Name"
 msgstr "Nom"
 
-#: models/Entity.py:18
-#: models/EntityType.py:17
+#: models/Entity.py:18 models/EntityType.py:17 models/Permission.py:18
+#: models/Role.py:19
 msgid "Slug"
 msgstr "Code"
 
-#: models/Entity.py:20
-#: models/Period.py:95
-#: models/Report.py:61
+#: models/Entity.py:20 models/Period.py:95 models/Report.py:74
 msgid "Type"
 msgstr "Type"
 
-#: models/Entity.py:23
+#: models/Entity.py:23 models/Provider.py:35 models/Provider.py:38
+#: web/views/profile.py:22 web/views/profile.py:24 web/views/providers.py:52
+#: web/views/providers.py:55
+msgid "Phone Number"
+msgstr "Nº téléphone"
+
+#: models/Entity.py:26
 msgid "Parent"
 msgstr "Parent"
 
-#: models/Entity.py:33
+#: models/Entity.py:36
 #, python-format
 msgid "%(name)s/%(parent)s"
 msgstr "%(name)s/%(parent)s"
 
-#: models/Entity.py:39
+#: models/Entity.py:42
 #, python-format
 msgid "%(code)s/%(name)s"
 msgstr "%(code)s/%(name)s"
@@ -69,17 +81,12 @@ msgstr "Type d'entité"
 msgid "Entity Types"
 msgstr "Types d'entité"
 
-#: models/Period.py:67
-#: models/Period.py:244
-#: models/Period.py:274
-#: models/Period.py:317
-#: models/Report.py:66
+#: models/Period.py:67 models/Period.py:244 models/Period.py:274
+#: models/Period.py:317 models/Report.py:79
 msgid "Period"
 msgstr "Période"
 
-#: models/Period.py:68
-#: models/Period.py:245
-#: models/Period.py:275
+#: models/Period.py:68 models/Period.py:245 models/Period.py:275
 #: models/Period.py:318
 msgid "Periods"
 msgstr "Périodes"
@@ -133,8 +140,7 @@ msgstr "%x"
 
 #. Translators: Python's date format for MonthPeriod.name()
 #. Translators: Python's date format for MonthPeriod.full_name()
-#: models/Period.py:289
-#: models/Period.py:294
+#: models/Period.py:289 models/Period.py:294
 #, python-format
 msgid "%(formatted_date)s"
 msgstr "%(formatted_date)s"
@@ -152,80 +158,13 @@ msgstr "%B %Y"
 msgid "%Y"
 msgstr "%Y"
 
-#: models/Report.py:49
-msgid "Source"
-msgstr "Source"
-
-#: models/Report.py:49
-msgid "Aggregated"
-msgstr "Agrégé"
-
-#: models/Report.py:54
-msgid "Report"
-msgstr "Rapport"
-
-#: models/Report.py:55
-msgid "Reports"
-msgstr "Rapports"
-
-#: models/Report.py:60
-msgid "Status"
-msgstr "Statut"
-
-#: models/Report.py:64
-msgid "Receipt"
-msgstr "Reçu"
-
-#: models/Report.py:71
-msgid "Created By"
-msgstr "Créé par"
-
-#: models/Report.py:73
-msgid "Created On"
-msgstr "Créé le"
-
-#: models/Report.py:76
-msgid "Modified By"
-msgstr "Modifié par"
-
-#: models/Report.py:78
-msgid "Modified On"
-msgstr "Modifié le"
-
-#: models/Report.py:86
-#, python-format
-msgid "%(entity)s/%(period)s"
-msgstr "%(entity)s/%(period)s"
-
-#: models/Access.py:22
-#: models/Access.py:23
-#: models/Provider.py:37
-msgid "Access"
-msgstr "Accès"
-
-#: models/Access.py:25
-#: models/Role.py:15
-msgid "Role"
-msgstr "Role"
-
-#: models/Access.py:38
-#, python-format
-msgid "%(role)s on %(target)s"
-msgstr "%(role)s à %(target)s"
-
 #: models/Permission.py:15
 msgid "Permission"
 msgstr "Permission"
 
-#: models/Permission.py:16
-#: models/Role.py:21
+#: models/Permission.py:16 models/Role.py:21
 msgid "Permissions"
 msgstr "Permissions"
-
-#: models/Permission.py:18
-#: models/Role.py:19
-msgid "Slug"
-msgstr "Code"
 
 #: models/Provider.py:28
 msgid "Provider"
@@ -239,19 +178,244 @@ msgstr "Participants"
 msgid "User"
 msgstr "Utilisateur"
 
-#: models/Provider.py:35
-msgid "Phone Number"
-msgstr "Nº téléphone"
-
-#: models/Provider.py:62
+#: models/Provider.py:65
 #, python-format
 msgid "%(name)s (%(access)s)"
 msgstr "%(name)s (%(access)s)"
+
+#: models/Report.py:62
+msgid "Source"
+msgstr "Source"
+
+#: models/Report.py:62
+msgid "Aggregated"
+msgstr "Agrégé"
+
+#: models/Report.py:67
+msgid "Report"
+msgstr "Rapport"
+
+#: models/Report.py:68
+msgid "Reports"
+msgstr "Rapports"
+
+#: models/Report.py:73
+msgid "Status"
+msgstr "Statut"
+
+#: models/Report.py:77
+msgid "Receipt"
+msgstr "Reçu"
+
+#: models/Report.py:84
+msgid "Created By"
+msgstr "Créé par"
+
+#: models/Report.py:86
+msgid "Created On"
+msgstr "Créé le"
+
+#: models/Report.py:89
+msgid "Modified By"
+msgstr "Modifié par"
+
+#: models/Report.py:91
+msgid "Modified On"
+msgstr "Modifié le"
+
+#: models/Report.py:99
+#, python-format
+msgid "%(entity)s/%(period)s"
+msgstr "%(entity)s/%(period)s"
 
 #: models/Role.py:16
 msgid "Roles"
 msgstr "Roles"
 
-#: models/Role.py:18
-msgid "Name"
+#: reporting/excel.py:188
+#, python-format
+msgid "%(data)s is not a valid data for %(field)s"
+msgstr "%(data)s n'est pas une donnée valide pour %(field)s"
+
+#: templatetags/bolibana.py:38
+#, python-format
+msgid "(%(ind)s) %(num)s"
+msgstr ""
+
+#: templatetags/bolibana.py:49
+msgid "Children Under 5yo."
+msgstr ""
+
+#: templatetags/bolibana.py:51
+msgid "Children Over 5yo."
+msgstr ""
+
+#: templatetags/bolibana.py:53
+msgid "Pregnant Women"
+msgstr ""
+
+#: templatetags/bolibana.py:55
+msgid "Reporting"
+msgstr "Rapport"
+
+#: templatetags/bolibana.py:57
+msgid "Collect / Data Entry"
+msgstr ""
+
+#: templatetags/bolibana.py:59
+msgid "Stock outs"
+msgstr ""
+
+#: templatetags/bolibana.py:61
+msgid "All Age"
+msgstr ""
+
+#: templatetags/bolibana.py:64
+msgid "Default"
+msgstr ""
+
+#: templatetags/bolibana.py:203
+msgid "Data Collection"
+msgstr ""
+
+#: templatetags/bolibana.py:205
+msgid "District Validation"
+msgstr ""
+
+#: templatetags/bolibana.py:207
+msgid "Region Validation"
+msgstr ""
+
+#: templatetags/bolibana.py:209
+msgid "National Analysis"
+msgstr ""
+
+#: tools/utils.py:74
+msgid "No Recipients for that message"
+msgstr ""
+
+#: tools/utils.py:78
+msgid "Unable to send empty email messages"
+msgstr ""
+
+#: tools/utils.py:88
+#, python-format
+msgid "Message from %(site)s"
+msgstr ""
+
+#: tools/utils.py:201
+#, python-format
+msgid "You don't have permission %(perm)s on %(entity)s"
+msgstr ""
+
+#: tools/utils.py:205
+#, python-format
+msgid "You don't have permission %(perm)s"
+msgstr ""
+
+#: web/decorators.py:28
+msgid ""
+"The credentials you are using to log in are not valid. Please contact ANTIM."
+msgstr ""
+
+#: web/views/addressbook.py:16
+msgid "All"
+msgstr ""
+
+#: web/views/entities.py:65
+#, python-format
+msgid "Entity %(entity)s updated."
+msgstr ""
+
+#: web/views/entities.py:68
+#, python-format
+msgid "Entity %(entity)s created."
+msgstr ""
+
+#: web/views/profile.py:16 web/views/providers.py:46
+msgid "First Name"
+msgstr ""
+
+#: web/views/profile.py:18 web/views/providers.py:48
+msgid "Last Name"
 msgstr "Nom"
+
+#: web/views/profile.py:20 web/views/providers.py:50
+msgid "E-mail Address"
+msgstr ""
+
+#: web/views/profile.py:29
+msgid "New Password"
+msgstr ""
+
+#: web/views/profile.py:32
+msgid "Confirm New Password"
+msgstr ""
+
+#: web/views/profile.py:40
+msgid "You must confirm your password"
+msgstr ""
+
+#: web/views/profile.py:42
+msgid "Your passwords do not match"
+msgstr ""
+
+#: web/views/profile.py:63 web/views/providers.py:154
+msgid "Profile details updated."
+msgstr ""
+
+#: web/views/profile.py:73
+msgid "Password updated."
+msgstr ""
+
+#: web/views/providers.py:44
+msgid "User ID"
+msgstr "Utilisateur"
+
+#: web/views/providers.py:77
+#, python-format
+msgid "Phone number already taken by %(provider)s"
+msgstr ""
+
+#: web/views/providers.py:99
+msgid "Entity is not valid for this Role."
+msgstr ""
+
+#: web/views/providers.py:166 web/views/providers.py:278
+#, python-format
+msgid "An e-mail containing the password has been sent to %(email)s"
+msgstr ""
+
+#: web/views/providers.py:171 web/views/providers.py:283
+#, python-format
+msgid ""
+"Unable to send e-mail to %(email)s. Please record and forward the password: "
+"%(pass)s"
+msgstr ""
+
+#: web/views/providers.py:184 web/views/providers.py:296
+#, python-format
+msgid "Please record and forward the generated password: %(pass)s"
+msgstr ""
+
+#: web/views/providers.py:234 web/views/providers.py:260
+#, python-format
+msgid "There is no Provider account with ID #%(id)d"
+msgstr ""
+
+#: web/views/providers.py:238
+msgid "Requested status is same as current user status."
+msgstr ""
+
+#: web/views/providers.py:243
+#, python-format
+msgid "%(provider)s status has been changed to %(status)s"
+msgstr ""
+
+#: web/views/providers.py:246
+msgid "active"
+msgstr "actif"
+
+#: web/views/providers.py:248
+msgid "inactive"
+msgstr "inactif"
