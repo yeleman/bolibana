@@ -292,7 +292,7 @@ class MonthPeriod(Period):
     def full_name(self):
         # Translators: Python's date format for MonthPeriod.full_name()
         return ugettext(u"%(formatted_date)s") % \
-                 {'formatted_date': self.middle().strftime(ugettext('%B %Y'))}
+                 {'formatted_date': self.middle().strftime(ugettext('%B %Y')).decode('utf-8')}
 
     @classmethod
     def delta(self):
