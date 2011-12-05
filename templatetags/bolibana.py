@@ -84,14 +84,27 @@ def report_status_verbose(value):
     return value
 
 
+@register.filter(name='reportyesno')
+@stringfilter
+def report_yesno_verbose(value):
+    try:
+        from pnlp_core.models import MalariaReport
+    except:
+        return value
+    for v, name in MalariaReport.YESNO:
+        if v.__str__() == value:
+            return name
+    return value
+
+
 @register.filter(name='reportvalue')
 @stringfilter
-def report_type_verbose(value):
+def report_value(value):
     try:
         float(value)
         return number_format(value)
     except:
-        return report_type_verbose(value)
+        return report_yesno_verbose(value)
 
 
 def strnum_french(numstr):
