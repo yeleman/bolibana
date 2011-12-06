@@ -231,9 +231,9 @@ def css_rate_class(rate):
     except:
         return rate
     else:
-        if rate < 20:
+        if rate < 0.20:
             return 'error'
-        if rate < 60:
+        if rate < 0.60:
             return 'warning'
         return 'success'
 
