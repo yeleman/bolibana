@@ -37,6 +37,7 @@ class ReportAdmin(admin.ModelAdmin):
 
     pass
 
+
 class RoleAdmin(admin.ModelAdmin):
 
     pass
@@ -53,6 +54,7 @@ class AccessAdmin(admin.ModelAdmin):
 
 
 class ProviderAdmin(admin.ModelAdmin):
-    list_display = ('username', 'first_name', 'last_name', 'first_access', \
-                    'phone_number', 'phone_number_extra', 'email', 'is_active', 'is_staff')
+    list_display = ('username', 'first_name', 'last_name', 'first_access',
+                    'phone_number', 'phone_number_extra', 'email',
+                    'is_active', 'is_staff')
     search_fields = ['username', 'first_name', 'last_name', 'email']

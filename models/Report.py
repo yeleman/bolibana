@@ -27,6 +27,13 @@ class ValidatedManager(models.Manager):
                         .filter(_status__gte=Report.STATUS_VALIDATED)
 
 
+class CompleteManager(models.Manager):
+
+    def get_query_set(self):
+        return super(CompleteManager, self).get_query_set() \
+                        .filter(_status__gte=Report.STATUS_COMPLETE)
+
+
 class Report(models.Model):
 
     STATUS_UNSAVED = 0
@@ -75,12 +82,17 @@ class Report(models.Model):
     receipt = models.CharField(max_length=30, unique=True, \
                                blank=True, null=False, \
                                verbose_name=_(u"Receipt"))
-    period = models.ForeignKey('Period', related_name='%(app_label)s_%(class)s_reports', \
+    period = models.ForeignKey('Period',
+                               related_name='%(app_label)s_' \
+                                            '%(class)s_reports',
                                verbose_name=_(u"Period"))
-    entity = models.ForeignKey('Entity', related_name='%(app_label)s_%(class)s_reports', \
+    entity = models.ForeignKey('Entity',
+                               related_name='%(app_label)s_' \
+                                            '%(class)s_reports',
                                verbose_name=_(u"Entity"))
     created_by = models.ForeignKey('Provider', \
-                                   related_name='%(app_label)s_%(class)s_reports', \
+                                   related_name='%(app_label)s_' \
+                                                '%(class)s_reports',
                                    verbose_name=_(u"Created By"))
     created_on = models.DateTimeField(auto_now_add=True, \
                                       verbose_name=_(u"Created On"))
@@ -94,6 +106,7 @@ class Report(models.Model):
     objects = models.Manager()
     unvalidated = UnValidatedManager()
     validated = ValidatedManager()
+    complete = CompleteManager()
 
     def __unicode__(self):
         return ugettext(u"%(entity)s/%(period)s") % {'entity': self.entity, \

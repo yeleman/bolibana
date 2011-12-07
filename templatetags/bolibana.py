@@ -186,7 +186,8 @@ def format_percent(value, precision=2, french=True):
 @register.filter(name='percentraw')
 @stringfilter
 def format_percent_us(value, precision=2, french=True):
-    return format_percent(value, precision, french=False)[:-1].replace(',', '.')
+    return format_percent(value,
+                          precision, french=False)[:-1].replace(',', '.')
 
 
 def get_parent_by_type(entity, type):
@@ -244,6 +245,7 @@ def provider_has_permission(provider, perm_slug=None):
         return provider.has_permission(perm_slug)
     except:
         return False
+
 
 @register.filter(name='sorted')
 def data_sort(data):

@@ -232,6 +232,7 @@ def random_proverb():
     p = proverbs[random.randint(0, len(proverbs) - 1)]
     return (langs[p[0]], p[1], p[2])
 
+
 def generate_receipt(instance, fix='', add_random=False, format=None):
         """ generates a reversable text receipt for a NUTReport
 
