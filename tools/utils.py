@@ -173,7 +173,7 @@ def clean_phone_number(number):
     return (None, clean_number)
 
 
-def get_autobot(self):
+def get_autobot():
     from bolibana_auth.models import Provider
     return Provider.objects.get(user__username='autobot')
 
@@ -210,6 +210,25 @@ def provider_can_or_403(permission, provider, entity):
             message = _(u"You don't have permission %(perm)s") \
                       % {'perm': permission}
         raise Http403(message)
+
+
+def entities_path(root, entity):
+    """ [] or {} for multi-select containing path to root entity """
+    paths = []
+    if entity.get_children():
+        p = {'selected': None, 'elems': entity_children(entity)}
+        paths.append(p)
+    while entity.parent and not entity == root:
+        p = {'selected': entity.slug, 'elems': entity_children(entity.parent)}
+        paths.append(p)
+        entity = entity.parent
+    paths.reverse()
+    return paths
+
+
+def entity_children(entity):
+    """ (entity.slug, entity) of all children of an entity """
+    return [(e.slug, e) for e in entity.children.all().order_by('name')]
 
 
 def get_level_for(provider):
