@@ -6,7 +6,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.utils.translation import ugettext_lazy as _, ugettext
-from bolibana.models import Role
+
+from bolibana.tools.utils import generate_user_hash
 
 
 class ActiveManager(models.Manager):
@@ -38,6 +39,9 @@ class Provider(models.Model):
                                     verbose_name=_(u"Phone Number"))
     access = models.ManyToManyField('Access', null=True, blank=True, \
                                     verbose_name=_(u"Access"))
+    pwhash = models.CharField(max_length=255, \
+                                    null=True, blank=True, \
+                                    verbose_name=_(u"Password Hash"))
 
     # django manager first
     objects = models.Manager()
@@ -83,6 +87,7 @@ class Provider(models.Model):
         user.save()
         provider = user.get_profile()
         provider.phone_number = phone_number
+        provider.pwhash = cls.generate_hash(username, password)
         if access:
             for indiv_access in access:
                 provider.access.add(indiv_access)
@@ -118,6 +123,13 @@ class Provider(models.Model):
             return self.first_access().target
         except AttributeError:
             return None
+
+    def check_hash(self, pwhash):
+        return self.pwhash == pwhash
+
+    @classmethod
+    def generate_hash(cls, username, password):
+        return generate_user_hash(username, password)
 
     # following accessors and methods are proxies to
     # the user's one.
