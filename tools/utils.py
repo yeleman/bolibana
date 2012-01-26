@@ -174,13 +174,12 @@ def clean_phone_number(number):
 
 
 def get_autobot():
-    from bolibana_auth.models import Provider
+    from bolibana.models import Provider
     return Provider.objects.get(user__username='autobot')
 
 
 def provider_can(permission, provider, entity=None):
     """ bolean if(not) provider has permission on entity or descendants """
-    from bolibana.models import Permission
 
     for access in provider.access.all():
         if access.role.permissions.filter(slug=permission).count() > 0:
