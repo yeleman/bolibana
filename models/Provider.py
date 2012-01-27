@@ -209,6 +209,8 @@ class Provider(models.Model):
         return self.name()
 
     def set_password(self, raw_password):
+        self.pwhash = self.generate_hash(self.username, raw_password)
+        self.save()
         return self.user.set_password(raw_password)
 
     def check_password(self, raw_password):
