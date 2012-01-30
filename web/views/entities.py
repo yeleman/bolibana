@@ -36,6 +36,10 @@ class AddEntityForm(ModelForm):
 
     class Meta:
         model = Entity
+    
+    def clean_phone_number(self):
+        if not self.cleaned_data.get('phone_number'):
+            return None
 
 
 class EditEntityForm(ModelForm):
