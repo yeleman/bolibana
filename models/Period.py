@@ -9,6 +9,9 @@ from django.utils.translation import ugettext_lazy as _, ugettext
 
 from bolibana.reporting.utils import week_from_weeknum, next_month
 
+ONE_SECOND = 0.0001
+ONE_MICROSECOND = 0.00000000001
+
 
 class DayManager(models.Manager):
     def get_query_set(self):
@@ -67,9 +70,6 @@ class Period(models.Model):
         verbose_name = _(u"Period")
         verbose_name_plural = _(u"Periods")
 
-    ONE_SECOND = 0.0001
-    ONE_MICROSECOND = 0.00000000001
-
     DAY = 'day'
     WEEK = 'week'
     MONTH = 'month'
@@ -112,7 +112,7 @@ class Period(models.Model):
     @classmethod
     def delta(self):
         ''' timedelta() length of a period. 1 = one day. '''
-        return 1 / 24
+        return 1.0 / 24
 
     @property
     def pid(self):
@@ -209,6 +209,9 @@ class Period(models.Model):
         ''' creates a period to fit the provided date in '''
         if not isinstance(date_obj, datetime):
             date_obj = datetime.fromtimestamp(float(date_obj.strftime('%s')))
+            date_obj = datetime.datetime(date_obj.year, date_obj.month,
+                                         date_obj.day, date_obj.hour,
+                                         date_obj.minute, 1)
 
         try:
             period = [period for period in cls.objects.all() \
