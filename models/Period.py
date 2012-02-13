@@ -310,7 +310,7 @@ class MonthPeriod(Period):
         start = date_obj.replace(day=1, hour=0, minute=0, \
                                  second=0, microsecond=0)
         end = start.replace(year=nyear, month=nmonth) \
-              - timedelta(cls.ONE_MICROSECOND)
+              - timedelta(ONE_MICROSECOND)
         return (start, end)
 
 
