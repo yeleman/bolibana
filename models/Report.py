@@ -2,12 +2,11 @@
 # encoding=utf-8
 # maintainer: rgaudin
 
+import reversion
 from django.dispatch import receiver
 from django.db import models
 from django.db.models.signals import pre_save, post_save
-from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _, ugettext
-import reversion
 
 #from bolibana.models import Provider
 #from bolibana.models import Period
@@ -17,21 +16,34 @@ class UnValidatedManager(models.Manager):
 
     def get_query_set(self):
         return super(UnValidatedManager, self).get_query_set() \
-                        .filter(_status__lt=Report.STATUS_VALIDATED)
+                        .filter(_status__in=(Report.STATUS_UNSAVED,
+                                             Report.STATUS_CREATED,
+                                             Report.STATUS_INCOMPLETE,
+                                             Report.STATUS_ERRONEOUS,
+                                             Report.STATUS_COMPLETE,
+                                             Report.STATUS_MODIFIED_AUTHOR,
+                                             Report.STATUS_MODIFIED_VALIDATOR))
 
 
 class ValidatedManager(models.Manager):
 
     def get_query_set(self):
         return super(ValidatedManager, self).get_query_set() \
-                        .filter(_status__gte=Report.STATUS_VALIDATED)
+                        .filter(_status__in=(Report.STATUS_VALIDATED,
+                                             Report.STATUS_CLOSED,
+                                             Report.STATUS_AUTO_VALIDATED))
 
 
 class CompleteManager(models.Manager):
 
     def get_query_set(self):
         return super(CompleteManager, self).get_query_set() \
-                        .filter(_status__gte=Report.STATUS_COMPLETE)
+                        .filter(_status__in=(Report.STATUS_COMPLETE,
+                                             Report.STATUS_VALIDATED,
+                                             Report.STATUS_CLOSED,
+                                             Report.STATUS_MODIFIED_AUTHOR,
+                                             Report.STATUS_MODIFIED_VALIDATOR,
+                                             STATUS_AUTO_VALIDATED))
 
 
 class Report(models.Model):
