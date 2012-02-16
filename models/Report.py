@@ -43,7 +43,7 @@ class CompleteManager(models.Manager):
                                              Report.STATUS_CLOSED,
                                              Report.STATUS_MODIFIED_AUTHOR,
                                              Report.STATUS_MODIFIED_VALIDATOR,
-                                             STATUS_AUTO_VALIDATED))
+                                             Report.STATUS_AUTO_VALIDATED))
 
 
 class Report(models.Model):
