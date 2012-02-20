@@ -115,6 +115,8 @@ class IndicatorTable(object):
 
     def data(self):
         """ access method: sorted data dictionary items """
+        from pprint import pprint
+        pprint(self.data_unsorted().items())
         return sorted(self.data_unsorted().items())
 
     def line_is_ref(self, name):
@@ -166,21 +168,24 @@ class IndicatorTable(object):
         # loop on periods (columns)
         for period in self.periods:
 
+            # period.pid
+            pid = period.middle().strftime('%Y%m')
+
             # Periods might be invalid: no data for the period.
             # In that case, we'll just skip it.
             if not self.period_is_valid(period):
                 # default empty period dict
-                line_data['values'][period.pid] = {'value': None, \
+                line_data['values'][pid] = {'value': None, \
                                                    'percent': None}
                 continue
 
             # get the raw value for that period
-            line_data['values'][period.pid] = \
+            line_data['values'][pid] = \
                                {'value': self.get_indicator_data(name, period)}
 
             # calculate the percentage if required
             if self.options.with_percentage:
-                line_data['values'][period.pid]['percent'] = \
+                line_data['values'][pid]['percent'] = \
                                           self.get_indicator_rate(name, period)
 
         # calculate total if required
