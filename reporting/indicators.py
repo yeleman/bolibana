@@ -115,8 +115,6 @@ class IndicatorTable(object):
 
     def data(self):
         """ access method: sorted data dictionary items """
-        from pprint import pprint
-        pprint(self.data_unsorted().items())
         return sorted(self.data_unsorted().items())
 
     def line_is_ref(self, name):
