@@ -102,7 +102,7 @@ def report_yesno_verbose(value):
 def report_value(value):
     try:
         float(value)
-        return number_format(value)
+        return number_format(value).replace(u' ', u' ') # non-break thin
     except:
         return report_yesno_verbose(value)
 
