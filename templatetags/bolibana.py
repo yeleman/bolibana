@@ -30,12 +30,12 @@ def phone_number_formatter(number):
             span = 3
         else:
             span = 2
-        return u" ".join([u"".join(number[i:i + span]) \
+        return u" ".join([u"".join(number[i:i + span]) \
                           for i in range(0, len(number), span)])
 
     ind, clean_number = clean_phone_number(number)
     if ind:
-        return _(u"(%(ind)s) %(num)s") \
+        return _(u"(%(ind)s) %(num)s") \
                % {'ind': ind, 'num': format(clean_number)}
     return format(clean_number)
 
