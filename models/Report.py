@@ -48,6 +48,8 @@ class CompleteManager(models.Manager):
 
 class Report(models.Model):
 
+    """ Applies to period-entity dependent report. """
+
     STATUS_UNSAVED = 0
     STATUS_CREATED = 1
     STATUS_INCOMPLETE = 2
