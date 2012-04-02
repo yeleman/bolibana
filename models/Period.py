@@ -124,7 +124,7 @@ class Period(models.Model):
         return self.start_on + ((self.end_on - self.start_on) / 2)
 
     def __unicode__(self):
-        return self.name()
+        return self.name().decode('utf-8')
 
     def name(self):
         try:
