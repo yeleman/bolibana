@@ -244,6 +244,12 @@ class Period(models.Model):
         d = soy + timedelta(WeekPeriod.delta() * weeknum)
         return cls.find_create_by_date(d)
 
+    @classmethod
+    def find_create_by_quarter(cls, year, quarter):
+        soy = date(year, 1, 1)
+        d = soy + timedelta(QuarterPeriod.delta() * quarter)
+        return cls.find_create_by_date(d)
+
 
 class DayPeriod(Period):
 
@@ -400,23 +406,24 @@ class QuarterPeriod(Period):
 
     @classmethod
     def boundaries(cls, date_obj):
-        clean_start = date_obj.replace(day=1, hour=0, minute=0, \
+
+        clean_start = date_obj.replace(month=1, day=1, hour=0, minute=0, \
                                        second=0, microsecond=0)
         clean_end = clean_start - timedelta(ONE_MICROSECOND)
-        clean_end.replace(year=date_obj.year)
+        clean_end = clean_end.replace(year=date_obj.year)
 
         if date_obj.month in (1, 2, 3):
             start = clean_start.replace(month=1)
-            end = clean_start.replace(month=4) - timedelta(ONE_MICROSECOND)
+            end = start.replace(month=4) - timedelta(ONE_MICROSECOND)
         elif date_obj.month in (4, 5, 6):
             start = clean_start.replace(month=4)
-            end = clean_start.replace(month=7) - timedelta(ONE_MICROSECOND)
+            end = start.replace(month=7) - timedelta(ONE_MICROSECOND)
         elif date_obj.month in (7, 8, 9):
             start = clean_start.replace(month=7)
-            end = clean_start.replace(month=10) - timedelta(ONE_MICROSECOND)
+            end = start.replace(month=10) - timedelta(ONE_MICROSECOND)
         else:
             start = clean_start.replace(month=10)
-            end = clean_start.replace(year=date_obj.year + 1) - timedelta(ONE_MICROSECOND)
+            end = clean_end
         
         return (start, end)
 
