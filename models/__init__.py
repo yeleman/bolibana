@@ -2,7 +2,7 @@
 # encoding=utf-8
 # maintainer: rgaudin
 
-from Period import Period, MonthPeriod, YearPeriod
+from Period import Period, MonthPeriod, YearPeriod, WeekPeriod, QuarterPeriod
 from Entity import Entity
 from EntityType import EntityType
 from Report import Report

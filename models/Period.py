@@ -238,6 +238,12 @@ class Period(models.Model):
             period.save()
         return period
 
+    @classmethod
+    def from_weeknum(cls, year, weeknum):
+        soy = date(year, 1, 1)
+        d = soy + timedelta(WeekPeriod.delta() * weeknum)
+        return cls.find_create_by_date(d)
+
 
 class DayPeriod(Period):
 
@@ -265,6 +271,37 @@ class DayPeriod(Period):
     def boundaries(cls, date_obj):
         start = date_obj.replace(hour=0, minute=0, \
                                  second=0, microsecond=0)
+        end = start + timedelta(cls.delta()) - timedelta(ONE_MICROSECOND)
+        return (start, end)
+
+
+class WeekPeriod(Period):
+
+    class Meta:
+        proxy = True
+        app_label = 'bolibana'
+        verbose_name = _(u"Period")
+        verbose_name_plural = _(u"Periods")
+
+    objects = WeekManager()
+
+    @classmethod
+    def type(cls):
+        return cls.WEEK
+
+    def name(self):
+        # Translators: Python's date format for DayPeriod.name()
+        return self.middle().strftime(ugettext('%W/%Y'))
+
+    @classmethod
+    def delta(self):
+        return 7
+
+    @classmethod
+    def boundaries(cls, date_obj):
+        
+        start = date_obj - timedelta(date_obj.weekday())
+        start = start.replace(hour=0, minute=0, second=0, microsecond=0)
         end = start + timedelta(cls.delta()) - timedelta(ONE_MICROSECOND)
         return (start, end)
 
@@ -314,6 +351,76 @@ class MonthPeriod(Period):
         return (start, end)
 
 
+class QuarterPeriod(Period):
+
+    class Meta:
+        proxy = True
+        app_label = 'bolibana'
+        verbose_name = _(u"Period")
+        verbose_name_plural = _(u"Periods")
+
+    objects = QuarterManager()
+
+    @classmethod
+    def type(cls):
+        return cls.QUARTER
+
+    @property
+    def quarter(self):
+        m = self.middle().month
+        if m in (1, 2, 3):
+            return 1
+        elif m in (4, 5, 6):
+            return 2
+        elif m in (7, 8, 9):
+            return 3
+        else:
+            return 4
+
+    @property
+    def pid(self):
+        return 'Q%d.%s' % (self.quarter, self.middle().strftime('%Y'))
+
+    def name(self):
+        # Translators: Python's date format for MonthPeriod.name()
+        return ugettext(u"Q%(quarter)s.%(formatted_date)s") % \
+                 {'formatted_date': self.middle().strftime(ugettext('%Y')),
+                  'quarter': self.quarter}
+
+    def full_name(self):
+        # Translators: Python's date format for MonthPeriod.full_name()
+        return ugettext(u"%(formatted_date)s") % \
+                 {'formatted_date': self.middle()\
+                                        .strftime(ugettext('%B %Y'))\
+                                        .decode('utf-8')}
+
+    @classmethod
+    def delta(self):
+        return 88
+
+    @classmethod
+    def boundaries(cls, date_obj):
+        clean_start = date_obj.replace(day=1, hour=0, minute=0, \
+                                       second=0, microsecond=0)
+        clean_end = clean_start - timedelta(ONE_MICROSECOND)
+        clean_end.replace(year=date_obj.year)
+
+        if date_obj.month in (1, 2, 3):
+            start = clean_start.replace(month=1)
+            end = clean_start.replace(month=4) - timedelta(ONE_MICROSECOND)
+        elif date_obj.month in (4, 5, 6):
+            start = clean_start.replace(month=4)
+            end = clean_start.replace(month=7) - timedelta(ONE_MICROSECOND)
+        elif date_obj.month in (7, 8, 9):
+            start = clean_start.replace(month=7)
+            end = clean_start.replace(month=10) - timedelta(ONE_MICROSECOND)
+        else:
+            start = clean_start.replace(month=10)
+            end = clean_start.replace(year=date_obj.year + 1) - timedelta(ONE_MICROSECOND)
+        
+        return (start, end)
+
+
 class YearPeriod(Period):
 
     class Meta:
@@ -340,5 +447,5 @@ class YearPeriod(Period):
     def boundaries(cls, date_obj):
         start = date_obj.replace(month=0, day=0, hour=0, minute=0, \
                                  second=0, microsecond=0)
-        end = start + timedelta(cls.delta()) - timedelta(ONE_MICROSECOND)
+        end = start.replace(year=date_obj.year + 1) - timedelta(ONE_MICROSECOND)
         return (start, end)
