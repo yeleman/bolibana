@@ -239,7 +239,7 @@ class Period(models.Model):
         return period
 
     @classmethod
-    def from_weeknum(cls, year, weeknum):
+    def find_create_by_weeknum(cls, year, weeknum):
         soy = date(year, 1, 1)
         d = soy + timedelta(WeekPeriod.delta() * weeknum)
         return cls.find_create_by_date(d)
