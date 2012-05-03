@@ -31,12 +31,12 @@ def addressbook(request, template='addressbook.html'):
 
         if request.POST.get('role'):
             providers = providers.filter(access__role__slug=request \
-                                 .POST.get('role'))
+                                 .POST.get('role'), user__is_active=True)
 
         if request.POST.get('entity'):
             entity = Entity.objects.get(id=request.POST.get('entity'))
             providers = providers.filter(access__object_id__in=[entity.id] \
-                                    + [e.id for e in entity.get_descendants()])
+                                    + [e.id for e in entity.get_descendants()],user__is_active=True)
         context.update({'contacts': providers})
     else:
         form = AddressBookForm()
