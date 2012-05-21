@@ -34,7 +34,7 @@ class Access(models.Model):
 
     def name(self):
         try:
-            if self.target.level == 0:
+            if getattr(self.target, 'level', -1) == 0:
                 return self.role.__unicode__()
             else:
                 return ugettext(u"%(role)s on %(target)s") \
