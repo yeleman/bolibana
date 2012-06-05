@@ -104,6 +104,41 @@ class Period(models.Model):
     customs = CustomManager()
     django = models.Manager()
 
+    def list_of_subs(self, cls):
+        if cls == self.__class__:
+            return [self]
+        d = []
+        n = cls.find_create_by_date(self.start_on, dont_create=True)
+        while n.start_on <= self.end_on:
+            d.append(n)
+            n = cls.find_create_by_date(n.start_on + timedelta(cls.delta()), 
+                                        dont_create=True)
+        return d
+
+    @property
+    def days(self):
+        return self.list_of_subs(DayPeriod)
+
+    @property
+    def weeks(self):
+        return self.list_of_subs(WeekPeriod)
+
+    @property
+    def months(self):
+        return self.list_of_subs(MonthPeriod)
+
+    @property
+    def quarters_(self):
+        return self.list_of_subs(QuarterPeriod)
+
+    # @property
+    # def semesters(self):
+    #     return self.list_of_subs(SemesterPeriod)a
+
+    @property
+    def years(self):
+        return self.list_of_subs(YearPeriod)
+
     @classmethod
     def type(cls):
         ''' default type for period creation '''
@@ -218,9 +253,10 @@ class Period(models.Model):
                                         if period.start_on <= date_obj \
                                         and period.end_on >= date_obj][0]
         except IndexError:
-            if dont_create:
-                raise
+                
             period = cls.find_create_with(*cls.boundaries(date_obj))
+            if dont_create:
+                return period
             period.save()
         return period
 
@@ -260,6 +296,10 @@ class DayPeriod(Period):
         verbose_name_plural = _(u"Periods")
 
     objects = DayManager()
+
+    # @property
+    # def days(self):
+    #     return [self]
 
     @classmethod
     def type(cls):
@@ -344,7 +384,7 @@ class MonthPeriod(Period):
 
     @classmethod
     def delta(self):
-        return 28
+        return 31
 
     @classmethod
     def boundaries(cls, date_obj):
