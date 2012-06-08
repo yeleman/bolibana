@@ -5,45 +5,71 @@
 import reversion
 from django.dispatch import receiver
 from django.db import models
+from django.db.models.query import QuerySet
 from django.db.models.signals import pre_save, post_save
 from django.utils.translation import ugettext_lazy as _, ugettext
 
-#from bolibana.models import Provider
-#from bolibana.models import Period
+
+def unvalidated_status():
+    return (Report.STATUS_UNSAVED,
+            Report.STATUS_CREATED,
+            Report.STATUS_INCOMPLETE,
+            Report.STATUS_ERRONEOUS,
+            Report.STATUS_COMPLETE,
+            Report.STATUS_MODIFIED_AUTHOR,
+            Report.STATUS_MODIFIED_VALIDATOR)
+
+def validated_status():
+    return (Report.STATUS_VALIDATED,
+            Report.STATUS_CLOSED,
+            Report.STATUS_AUTO_VALIDATED)
+
+def complete_status():
+    return (Report.STATUS_COMPLETE,
+            Report.STATUS_VALIDATED,
+            Report.STATUS_CLOSED,
+            Report.STATUS_MODIFIED_AUTHOR,
+            Report.STATUS_MODIFIED_VALIDATOR,
+            Report.STATUS_AUTO_VALIDATED)
+
+
+class ValidationMixin(object):
+    def unvalidated(self):
+        return self.filter(_status__in=unvalidated_status())
+
+    def validated(self):
+        return self.filter(_status__in=validated_status())
+
+    def complete(self):
+        return self.filter(_status__in=complete_status())
+
+class ValidationQuerySet(QuerySet, ValidationMixin):
+    pass
+
+class ValidationManager(models.Manager, ValidationMixin):
+    def get_query_set(self):
+        return ValidationQuerySet(self.model, using=self._db)
 
 
 class UnValidatedManager(models.Manager):
 
     def get_query_set(self):
         return super(UnValidatedManager, self).get_query_set() \
-                        .filter(_status__in=(Report.STATUS_UNSAVED,
-                                             Report.STATUS_CREATED,
-                                             Report.STATUS_INCOMPLETE,
-                                             Report.STATUS_ERRONEOUS,
-                                             Report.STATUS_COMPLETE,
-                                             Report.STATUS_MODIFIED_AUTHOR,
-                                             Report.STATUS_MODIFIED_VALIDATOR))
+                        .filter(_status__in=unvalidated_status())
 
 
 class ValidatedManager(models.Manager):
 
     def get_query_set(self):
         return super(ValidatedManager, self).get_query_set() \
-                        .filter(_status__in=(Report.STATUS_VALIDATED,
-                                             Report.STATUS_CLOSED,
-                                             Report.STATUS_AUTO_VALIDATED))
+                        .filter(_status__in=validated_status())
 
 
 class CompleteManager(models.Manager):
 
     def get_query_set(self):
         return super(CompleteManager, self).get_query_set() \
-                        .filter(_status__in=(Report.STATUS_COMPLETE,
-                                             Report.STATUS_VALIDATED,
-                                             Report.STATUS_CLOSED,
-                                             Report.STATUS_MODIFIED_AUTHOR,
-                                             Report.STATUS_MODIFIED_VALIDATOR,
-                                             Report.STATUS_AUTO_VALIDATED))
+                        .filter(_status__in=complete_status())
 
 
 class Report(models.Model):
@@ -117,7 +143,7 @@ class Report(models.Model):
                                        verbose_name=_(u"Modified On"))
 
     # django manager first
-    objects = models.Manager()
+    objects = ValidationManager() # models.Manager()
     unvalidated = UnValidatedManager()
     validated = ValidatedManager()
     complete = CompleteManager()
