@@ -169,6 +169,9 @@ class Period(models.Model):
             # TRANSLATORS: Python date format for Generic .name()
             return self.middle().strftime(ugettext('%c'))
 
+    def strid(self):
+        return self.middle().strftime('%s')
+
     def full_name(self):
         return self.name()
 
@@ -297,10 +300,6 @@ class DayPeriod(Period):
 
     objects = DayManager()
 
-    # @property
-    # def days(self):
-    #     return [self]
-
     @classmethod
     def type(cls):
         return cls.DAY
@@ -320,6 +319,8 @@ class DayPeriod(Period):
         end = start + timedelta(cls.delta()) - timedelta(ONE_MICROSECOND)
         return (start, end)
 
+    def strid(self):
+        return self.middle().strftime('%d-%m%Y')
 
 class WeekPeriod(Period):
 
@@ -350,6 +351,9 @@ class WeekPeriod(Period):
         start = start.replace(hour=0, minute=0, second=0, microsecond=0)
         end = start + timedelta(cls.delta()) - timedelta(ONE_MICROSECOND)
         return (start, end)
+
+    def strid(self):
+        return self.middle().strftime('%W-%Y')
 
 
 class MonthPeriod(Period):
@@ -395,6 +399,9 @@ class MonthPeriod(Period):
         end = start.replace(year=nyear, month=nmonth) \
               - timedelta(ONE_MICROSECOND)
         return (start, end)
+
+    def strid(self):
+        return self.middle().strftime('%m-%Y')
 
 
 class QuarterPeriod(Period):
@@ -467,6 +474,10 @@ class QuarterPeriod(Period):
         
         return (start, end)
 
+    def strid(self):
+        return '%s-%s' % (str(self.quarter).zfill(2),
+                          self.middle().strftime('%Y'))
+
 
 class YearPeriod(Period):
 
@@ -496,3 +507,6 @@ class YearPeriod(Period):
                                  second=0, microsecond=0)
         end = start.replace(year=date_obj.year + 1) - timedelta(ONE_MICROSECOND)
         return (start, end)
+
+    def strid(self):
+        return self.middle().strftime('%Y')
