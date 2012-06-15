@@ -285,9 +285,8 @@ class Period(models.Model):
 
     @classmethod
     def find_create_by_quarter(cls, year, quarter):
-        soy = date(year, 1, 1)
-        d = soy + timedelta(QuarterPeriod.delta() * quarter)
-        return cls.find_create_by_date(d)
+        return YearPeriod.find_create_from(year, dont_create=True) \
+                         .quarters_[quarter -1]
 
 
 class DayPeriod(Period):
@@ -449,7 +448,7 @@ class QuarterPeriod(Period):
 
     @classmethod
     def delta(self):
-        return 88
+        return 93
 
     @classmethod
     def boundaries(cls, date_obj):
