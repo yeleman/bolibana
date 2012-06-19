@@ -3,7 +3,7 @@
 # maintainer: rgaudin
 
 from django.db import models
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import ugettext_lazy as _
 
 
 class Role(models.Model):
@@ -19,6 +19,7 @@ class Role(models.Model):
     slug = models.SlugField(_(u"Slug"), max_length=15, primary_key=True)
     permissions = models.ManyToManyField('Permission', null=True, blank=True, \
                                          verbose_name=_(u"Permissions"))
+    level = models.CharField(_(u"Level"), max_length=50, null=True, blank=True)
 
     def __unicode__(self):
         return self.name

@@ -94,8 +94,18 @@ class EditProviderForm(forms.Form):
         if self.cleaned_data.get('role') in ('antim', 'pnlp'):
             return Entity.objects.filter(level=0)[0]
         elif self.cleaned_data.get('role') != 'partners':
-            if self.cleaned_data.get('entity').type.slug \
-               != self.cleaned_data.get('role'):
+
+            try:
+                role = Role.objects.get(slug=self.cleaned_data.get('role'))
+            except:
+                role = None
+            
+            if hasattr(role, 'level'):
+                level = getattr(role, 'level', None)
+            else:
+                level = self.cleaned_data.get('role')
+
+            if self.cleaned_data.get('entity').type.slug != level:
                 raise forms.ValidationError(_(u"Entity is not valid " \
                                               u"for this Role."))
         return self.cleaned_data.get('entity')
