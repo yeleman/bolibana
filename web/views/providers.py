@@ -100,9 +100,10 @@ class EditProviderForm(forms.Form):
             except:
                 role = None
             
-            if hasattr(role, 'level'):
-                level = getattr(role, 'level', None)
-            else:
+            # get level if exist
+            level = getattr(role, 'level', None)
+            
+            if not level:
                 level = self.cleaned_data.get('role')
 
             if self.cleaned_data.get('entity').type.slug != level:
