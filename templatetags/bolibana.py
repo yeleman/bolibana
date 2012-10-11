@@ -186,6 +186,8 @@ def format_percent(value, precision=2, french=True):
 @register.filter(name='percentraw')
 @stringfilter
 def format_percent_us(value, precision=2, french=True):
+    if value == u"null":
+        return value
     return format_percent(value,
                           precision, french=False)[:-1].replace(',', '.')
 
