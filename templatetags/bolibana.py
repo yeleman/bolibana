@@ -9,8 +9,8 @@ from django import template
 from django.template.defaultfilters import stringfilter
 from django.utils.translation import ugettext as _
 from django.core.urlresolvers import reverse
-
 from django.contrib.humanize.templatetags.humanize import intcomma
+from babeldjango.templatetags.babel import datefmt
 
 from ..models import Report, Entity
 from ..tools.utils import clean_phone_number
@@ -253,7 +253,6 @@ def provider_has_permission(provider, perm_slug=None):
 def data_sort(data):
     return sorted(data)
 
-
 @register.filter(name='elipstrunc')
 @stringfilter
 def elipstrunc(text, nbchars=50):
@@ -266,3 +265,16 @@ def elipstrunc(text, nbchars=50):
             l.append(text)
         return u"\n".join(l)
     return text
+
+
+@register.filter(name='graph_date_fmt')
+def graph_date_fmt(date_obj, periods=1):
+    if not isinstance(periods, int):
+        periods = len(periods)
+    if periods >= 8:
+        fmt = "MM/YY"
+    elif periods >= 5:
+        fmt = "MMM YYYY"
+    else:
+        fmt = "MMMM YYYY"
+    return datefmt(date_obj, fmt)
