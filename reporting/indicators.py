@@ -18,6 +18,16 @@ def blank(func):
     return func
 
 
+def hidden(func):
+    """ decorator adding _is_reference attribute """
+    func._is_hidden = True
+
+    @wraps(func)
+    def wrapper(self, *args, **kwargs):
+        return func(*args, **kwargs)
+    return func
+
+
 def reference(func):
     """ decorator adding _is_reference attribute """
     func._is_reference = True
@@ -109,8 +119,10 @@ class IndicatorTable(object):
         _data = {}
         for line in self.get_lines():
             is_ref = self.line_is_ref(line)
+            is_hidden = self.line_is_hidden(line)
             if (is_ref and self.options.with_reference) or not is_ref:
-                _data[self.line_index_slug(line)] = self.get_line_data(line)
+                if not is_hidden:
+                    _data[self.line_index_slug(line)] = self.get_line_data(line)
         return _data
 
     def data(self):
@@ -120,6 +132,10 @@ class IndicatorTable(object):
     def line_is_ref(self, name):
         """ is the requested line a reference one ? """
         return hasattr(getattr(self, name), '_is_reference')
+
+    def line_is_hidden(self, name):
+        """ should the requested line be hidden ? """
+        return hasattr(getattr(self, name), '_is_hidden')
 
     def line_is_blank(self, name):
         """ is the requested line a blank one ? """
