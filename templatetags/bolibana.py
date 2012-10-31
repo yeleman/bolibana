@@ -252,3 +252,17 @@ def provider_has_permission(provider, perm_slug=None):
 @register.filter(name='sorted')
 def data_sort(data):
     return sorted(data)
+
+
+@register.filter(name='elipstrunc')
+@stringfilter
+def elipstrunc(text, nbchars=50):
+    if len(text) > nbchars:
+        l = []
+        while len(text) > nbchars:
+            l.append(text[:nbchars])
+            text = text[nbchars:]
+        if text:
+            l.append(text)
+        return u"\n".join(l)
+    return text

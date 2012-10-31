@@ -3,6 +3,8 @@
 # maintainer: rgaudin
 
 from django.db import models
+from django.dispatch import receiver
+from django.db.models.signals import pre_save
 from django.utils.translation import ugettext_lazy as _, ugettext
 from mptt.models import MPTTModel, TreeForeignKey
 
@@ -46,3 +48,10 @@ class Entity(MPTTModel):
         if self.parent:
             return self.parent.type
         return self.parent
+
+
+@receiver(pre_save, sender=Entity)
+def pre_save_entity(sender, instance, **kwargs):
+    """ mark phone_number as None is not filled """
+    if instance.phone_number == u'':
+        instance.phone_number = None
