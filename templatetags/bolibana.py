@@ -252,3 +252,16 @@ def provider_has_permission(provider, perm_slug=None):
 @register.filter(name='sorted')
 def data_sort(data):
     return sorted(data)
+
+from babeldjango.templatetags.babel import datefmt
+@register.filter(name='graph_date_fmt')
+def graph_date_fmt(date_obj, periods=1):
+    if not isinstance(periods, int):
+        periods = len(periods)
+    if periods >= 8:
+        fmt = "MM/YY"
+    elif periods >= 5:
+        fmt = "MMM YYYY"
+    else:
+        fmt = "MMMM YYYY"
+    return datefmt(date_obj, fmt)
