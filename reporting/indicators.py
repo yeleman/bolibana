@@ -6,6 +6,7 @@ from functools import wraps
 from inspect import getmembers, ismethod
 
 from bolibana.models.Options import Options
+from bolibana.tools.caching import cache_result
 
 
 def blank(func):
@@ -63,6 +64,13 @@ def indicator(index=0, reference=None):
             return func(*args, **kwargs)
         return func
     return outer_wrapper
+
+
+def cache_ident(instance):
+    return (u'%(id)s_%(period)s_%(entity)s'
+            % {'id': instance.id,
+               'period': '#'.join([p.strid() for p in instance.periods]),
+               'entity': instance.entity.slug})
 
 
 class NoSourceData(Exception):
@@ -125,6 +133,11 @@ class IndicatorTable(object):
                     _data[self.line_index_slug(line)] = self.get_line_data(line)
         return _data
 
+    def cached_data(self):
+        # cache for a year (already validated data anyway)
+        return self.data(cache=True, cache_expiry=31536000)
+
+    @cache_result(ident=cache_ident)
     def data(self):
         """ access method: sorted data dictionary items """
         return sorted(self.data_unsorted().items())
