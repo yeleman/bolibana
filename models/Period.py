@@ -7,7 +7,7 @@ from datetime import datetime, date, timedelta
 from django.db import models
 from django.utils.translation import ugettext_lazy as _, ugettext
 
-from bolibana.reporting.utils import week_from_weeknum, next_month
+from bolibana.reporting.utils import next_month
 
 ONE_SECOND = 0.0001
 ONE_MICROSECOND = 0.00000000001
@@ -111,7 +111,7 @@ class Period(models.Model):
         n = cls.find_create_by_date(self.start_on, dont_create=True)
         while n.start_on <= self.end_on:
             d.append(n)
-            n = cls.find_create_by_date(n.start_on + timedelta(cls.delta()), 
+            n = cls.find_create_by_date(n.start_on + timedelta(cls.delta()),
                                         dont_create=True)
         return d
 
@@ -212,7 +212,7 @@ class Period(models.Model):
     @classmethod
     def find_create_from(cls, year, month=None, day=None, \
                          week=None, hour=None, minute=None, second=None, \
-                         dont_create=False):
+                         dont_create=False, is_iso=False):
 
         if not week and not month:
             # assume year search
@@ -226,9 +226,8 @@ class Period(models.Model):
             return period
 
         if week:
-            sw, ew = week_from_weeknum(year, week, is_iso=False)
-            period = cls.find_create_with(sw, ew)
-            return period
+            return cls.find_create_by_weeknum(year=year,
+                                              weeknum=week, is_iso=is_iso)
 
         month = month if month else 1
         day = day if day else 1
@@ -256,7 +255,7 @@ class Period(models.Model):
                                         if period.start_on <= date_obj \
                                         and period.end_on >= date_obj][0]
         except IndexError:
-                
+
             period = cls.find_create_with(*cls.boundaries(date_obj))
             if dont_create:
                 return period
@@ -278,15 +277,46 @@ class Period(models.Model):
         return period
 
     @classmethod
-    def find_create_by_weeknum(cls, year, weeknum):
-        soy = date(year, 1, 1)
-        d = soy + timedelta(WeekPeriod.delta() * weeknum)
-        return cls.find_create_by_date(d)
+    def find_create_by_weeknum(cls, year, weeknum, is_iso=False):
+
+        # version 1
+        # sw, ew = week_from_weeknum(year, week, is_iso=is_iso)
+        # period = cls.find_create_with(sw, ew)
+        # return period
+
+        # version 2
+        # soy = date(year, 1, 1)
+        # d = soy + timedelta(WeekPeriod.delta() * weeknum)
+        # return cls.find_create_by_date(d)
+
+        sy = datetime(year, 1, 1, 0, 0)
+        # ey = datetime(year, 12, 31, 23, 59)
+        ONE_WEEK = WeekPeriod.delta()
+
+        # retrieve start of year day
+        sy_dow = sy.isoweekday() if is_iso else sy.weekday()
+
+        # find first real week (first Mon/Sun)
+        if sy_dow != 0:
+            sy = sy + timedelta(ONE_WEEK - sy_dow)
+
+        # if we want first week, it's from Jan 1st to next Mon/Sun
+        if weeknum == 0:
+            start_week = sy
+            end_week = start_week + timedelta(ONE_WEEK - sy_dow) \
+                                  - timedelta(ONE_SECOND)
+        else:
+            weeknum -= 1  # cause we've set start as first real week
+            start_week = sy + timedelta(ONE_WEEK * weeknum)
+            end_week = start_week + timedelta(ONE_WEEK) - timedelta(ONE_SECOND)
+
+        period = cls.find_create_with(start_week, end_week)
+        return period
 
     @classmethod
     def find_create_by_quarter(cls, year, quarter):
         return YearPeriod.find_create_from(year, dont_create=True) \
-                         .quarters_[quarter -1]
+                         .quarters_[quarter - 1]
 
 
 class DayPeriod(Period):
@@ -321,6 +351,7 @@ class DayPeriod(Period):
     def strid(self):
         return self.middle().strftime('%d-%m%Y')
 
+
 class WeekPeriod(Period):
 
     class Meta:
@@ -345,7 +376,7 @@ class WeekPeriod(Period):
 
     @classmethod
     def boundaries(cls, date_obj):
-        
+
         start = date_obj - timedelta(date_obj.weekday())
         start = start.replace(hour=0, minute=0, second=0, microsecond=0)
         end = start + timedelta(cls.delta()) - timedelta(ONE_MICROSECOND)
@@ -470,7 +501,7 @@ class QuarterPeriod(Period):
         else:
             start = clean_start.replace(month=10)
             end = clean_end
-        
+
         return (start, end)
 
     def strid(self):
