@@ -12,3 +12,4 @@ from Options import Options
 from Permission import Permission
 from Provider import Provider
 from Role import Role
+from Project import Project

@@ -2,7 +2,6 @@
 # encoding=utf-8
 # maintainer: rgaudin
 
-import reversion
 from django.dispatch import receiver
 from django.db import models
 from django.db.models.query import QuerySet
@@ -19,10 +18,12 @@ def unvalidated_status():
             Report.STATUS_MODIFIED_AUTHOR,
             Report.STATUS_MODIFIED_VALIDATOR)
 
+
 def validated_status():
     return (Report.STATUS_VALIDATED,
             Report.STATUS_CLOSED,
             Report.STATUS_AUTO_VALIDATED)
+
 
 def complete_status():
     return (Report.STATUS_COMPLETE,
@@ -43,8 +44,10 @@ class ValidationMixin(object):
     def complete(self):
         return self.filter(_status__in=complete_status())
 
+
 class ValidationQuerySet(QuerySet, ValidationMixin):
     pass
+
 
 class ValidationManager(models.Manager, ValidationMixin):
     def get_query_set(self):
@@ -143,7 +146,7 @@ class Report(models.Model):
                                        verbose_name=_(u"Modified On"))
 
     # django manager first
-    objects = ValidationManager() # models.Manager()
+    objects = ValidationManager()  # models.Manager()
     unvalidated = UnValidatedManager()
     validated = ValidatedManager()
     complete = CompleteManager()
