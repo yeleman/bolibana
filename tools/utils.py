@@ -255,12 +255,14 @@ def generate_receipt(instance, fix='', add_random=False, format=None):
         """ generates a reversable text receipt for a NUTReport
 
         FORMAT:
-            RR000/sss-111-D
+            RR000/sss-111-DFX
             RR: region code on two letters
             000: internal report ID
             sss: entity slug
             111: sent day in year
-            D: sent day of week """
+            D: sent day of week
+            F: Suffix (optionnal)
+            X: Random 0-9 number (optionnal) """
 
         import random
         from bolibana.models import EntityType

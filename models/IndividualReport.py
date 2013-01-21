@@ -33,5 +33,5 @@ class IndividualReport(models.Model):
 
     def __unicode__(self):
         return ugettext(u"IDVR%(id)d - %(date)s") \
-        	   			% {'id': self.id, \
+                        % {'id': self.id, \
                            'date': self.created_on.strftime('%d.%m.%Y')}
