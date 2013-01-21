@@ -3,7 +3,7 @@
 # maintainer: rgaudin
 
 from django.db import models
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import ugettext_lazy as _
 
 
 class Permission(models.Model):
