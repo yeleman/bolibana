@@ -26,9 +26,6 @@ class Entity(MPTTModel):
     parent = TreeForeignKey('self', null=True, blank=True, \
                                                      related_name='children', \
                                                      verbose_name=_(u"Parent"))
-    projects = models.ManyToManyField('Project', \
-                                      verbose_name=_(u"Projects"), \
-                                        blank=True, null=True)
 
     def __unicode__(self):
         return self.name

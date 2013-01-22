@@ -4,10 +4,11 @@ from south.db import db
 from south.v2 import SchemaMigration
 from django.db import models
 
+
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        
+
         # Adding model 'Project'
         db.create_table('bolibana_project', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
@@ -16,23 +17,10 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal('bolibana', ['Project'])
 
-        # Adding M2M table for field projects on 'Entity'
-        db.create_table('bolibana_entity_projects', (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('entity', models.ForeignKey(orm['bolibana.entity'], null=False)),
-            ('project', models.ForeignKey(orm['bolibana.project'], null=False))
-        ))
-        db.create_unique('bolibana_entity_projects', ['entity_id', 'project_id'])
-
-
     def backwards(self, orm):
-        
+
         # Deleting model 'Project'
         db.delete_table('bolibana_project')
-
-        # Removing M2M table for field projects on 'Entity'
-        db.delete_table('bolibana_entity_projects')
-
 
     models = {
         'auth.group': {
@@ -79,7 +67,6 @@ class Migration(SchemaMigration):
             'name': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
             'parent': ('mptt.fields.TreeForeignKey', [], {'blank': 'True', 'related_name': "'children'", 'null': 'True', 'to': "orm['bolibana.Entity']"}),
             'phone_number': ('django.db.models.fields.CharField', [], {'max_length': '12', 'unique': 'True', 'null': 'True', 'blank': 'True'}),
-            'projects': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': "orm['bolibana.Project']", 'null': 'True', 'blank': 'True'}),
             'rght': ('django.db.models.fields.PositiveIntegerField', [], {'db_index': 'True'}),
             'slug': ('django.db.models.fields.SlugField', [], {'unique': 'True', 'max_length': '15', 'db_index': 'True'}),
             'tree_id': ('django.db.models.fields.PositiveIntegerField', [], {'db_index': 'True'}),
