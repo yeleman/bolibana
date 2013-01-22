@@ -30,6 +30,7 @@ class ReportProvider(models.Model):
                    'project': self.project,
                    'level': self.verbose_level})
 
+    @property
     def verbose_level(self):
         for level, name in REPORTING_LEVELS:
             if level == self.level:

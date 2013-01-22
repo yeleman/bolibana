@@ -4,7 +4,7 @@
 
 from django import forms
 from django.contrib import messages
-from django.shortcuts import render, RequestContext, redirect
+from django.shortcuts import render, redirect
 from django.utils.translation import ugettext as _, ugettext_lazy
 
 from bolibana.web.decorators import provider_required
