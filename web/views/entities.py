@@ -10,7 +10,10 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.translation import ugettext as _
 from django.views.generic import ListView
 
-from bolibana.models import Entity
+from bolibana.models.Entity import Entity
+from bolibana.models.ScheduledReporting import ScheduledReporting
+from bolibana.models.ReportClass import ReportClass
+from bolibana.models.ExpectedReporting import SOURCE_LEVEL
 from bolibana.web.decorators import provider_permission
 
 logger = logging.getLogger(__name__)
@@ -36,7 +39,7 @@ class AddEntityForm(ModelForm):
 
     class Meta:
         model = Entity
-    
+
     def clean_phone_number(self):
         if not self.cleaned_data.get('phone_number'):
             return None
@@ -52,9 +55,20 @@ class EditEntityForm(ModelForm):
 @provider_permission('can_manage_entities')
 def add_edit_entity(request, entity_id=None, template='add_edit_entity.html'):
     context = {'category': 'entities'}
+    report_class = ReportClass.objects.all()
 
     if entity_id:
         entity = get_object_or_404(Entity, id=entity_id)
+
+        for report in report_class:
+            print report
+            try:
+                ScheduledReporting.objects.get(report_class=report)
+            except:
+                Scheduled = ScheduledReporting(report_class=report,
+                                               entity=entity)
+                Scheduled.level = SOURCE_LEVEL
+                Scheduled.save()
         formclass = EditEntityForm
     else:
         entity = None
@@ -79,7 +93,8 @@ def add_edit_entity(request, entity_id=None, template='add_edit_entity.html'):
     # GET METHOD
     else:
         form = formclass(instance=entity)
-
-    context.update({'form': form, 'entity_id': entity_id, 'entity': entity})
+    scheduledreporting = ScheduledReporting.objects.all()
+    context.update({'form': form, 'entity_id': entity_id, 'entity': entity,
+                    'scheduledreporting': scheduledreporting})
 
     return render(request, template, context)
