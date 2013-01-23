@@ -314,11 +314,3 @@ def generate_user_hash(username, password, algo=None):
     for x in range(0, 2000):
         val = str(binascii.crc32(val))
     return val
-
-
-def get_reporting_level(entity, project):
-    from bolibana.models import ReportProvider
-    try:
-        return ReportProvider.objects.get(entity=entity, project=project).level
-    except ReportProvider.DoesNotExist:
-        return None
