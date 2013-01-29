@@ -4,23 +4,65 @@ from south.db import db
 from south.v2 import SchemaMigration
 from django.db import models
 
-
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-
-        # Adding model 'Project'
-        db.create_table('bolibana_project', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=30)),
-            ('slug', self.gf('django.db.models.fields.SlugField')(unique=True, max_length=15, db_index=True)),
+        
+        # Adding model 'ReportClass'
+        db.create_table('bolibana_reportclass', (
+            ('slug', self.gf('django.db.models.fields.SlugField')(max_length=35, primary_key=True, db_index=True)),
+            ('name', self.gf('django.db.models.fields.CharField')(max_length=50)),
+            ('cls', self.gf('django.db.models.fields.CharField')(unique=True, max_length=75)),
+            ('period_cls', self.gf('django.db.models.fields.CharField')(max_length=75)),
+            ('report_type', self.gf('django.db.models.fields.CharField')(max_length=1)),
         ))
-        db.send_create_signal('bolibana', ['Project'])
+        db.send_create_signal('bolibana', ['ReportClass'])
+
+        # Adding model 'ScheduledReporting'
+        db.create_table('bolibana_scheduledreporting', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('report_class', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bolibana.ReportClass'])),
+            ('entity', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bolibana.Entity'])),
+            ('level', self.gf('django.db.models.fields.PositiveIntegerField')()),
+            ('start', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='entity_rcls_providers_starting', null=True, to=orm['bolibana.Period'])),
+            ('end', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='entity_rcls_providers_ending', null=True, to=orm['bolibana.Period'])),
+        ))
+        db.send_create_signal('bolibana', ['ScheduledReporting'])
+
+        # Adding unique constraint on 'ScheduledReporting', fields ['report_class', 'entity']
+        db.create_unique('bolibana_scheduledreporting', ['report_class_id', 'entity_id'])
+
+        # Adding model 'ExpectedReporting'
+        db.create_table('bolibana_expectedreporting', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('report_class', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bolibana.ReportClass'])),
+            ('entity', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bolibana.Entity'])),
+            ('period', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bolibana.Period'])),
+            ('level', self.gf('django.db.models.fields.PositiveIntegerField')()),
+        ))
+        db.send_create_signal('bolibana', ['ExpectedReporting'])
+
+        # Adding unique constraint on 'ExpectedReporting', fields ['report_class', 'entity', 'period']
+        db.create_unique('bolibana_expectedreporting', ['report_class_id', 'entity_id', 'period_id'])
+
 
     def backwards(self, orm):
+        
+        # Removing unique constraint on 'ExpectedReporting', fields ['report_class', 'entity', 'period']
+        db.delete_unique('bolibana_expectedreporting', ['report_class_id', 'entity_id', 'period_id'])
 
-        # Deleting model 'Project'
-        db.delete_table('bolibana_project')
+        # Removing unique constraint on 'ScheduledReporting', fields ['report_class', 'entity']
+        db.delete_unique('bolibana_scheduledreporting', ['report_class_id', 'entity_id'])
+
+        # Deleting model 'ReportClass'
+        db.delete_table('bolibana_reportclass')
+
+        # Deleting model 'ScheduledReporting'
+        db.delete_table('bolibana_scheduledreporting')
+
+        # Deleting model 'ExpectedReporting'
+        db.delete_table('bolibana_expectedreporting')
+
 
     models = {
         'auth.group': {
@@ -78,6 +120,14 @@ class Migration(SchemaMigration):
             'name': ('django.db.models.fields.CharField', [], {'max_length': '30'}),
             'slug': ('django.db.models.fields.SlugField', [], {'unique': 'True', 'max_length': '15', 'db_index': 'True'})
         },
+        'bolibana.expectedreporting': {
+            'Meta': {'unique_together': "(('report_class', 'entity', 'period'),)", 'object_name': 'ExpectedReporting'},
+            'entity': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bolibana.Entity']"}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'level': ('django.db.models.fields.PositiveIntegerField', [], {}),
+            'period': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bolibana.Period']"}),
+            'report_class': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bolibana.ReportClass']"})
+        },
         'bolibana.period': {
             'Meta': {'unique_together': "(('start_on', 'end_on', 'period_type'),)", 'object_name': 'Period'},
             'end_on': ('django.db.models.fields.DateTimeField', [], {}),
@@ -89,12 +139,6 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'Permission'},
             'slug': ('django.db.models.fields.SlugField', [], {'max_length': '50', 'primary_key': 'True', 'db_index': 'True'})
         },
-        'bolibana.project': {
-            'Meta': {'object_name': 'Project'},
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '30'}),
-            'slug': ('django.db.models.fields.SlugField', [], {'unique': 'True', 'max_length': '15', 'db_index': 'True'})
-        },
         'bolibana.provider': {
             'Meta': {'object_name': 'Provider'},
             'access': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': "orm['bolibana.Access']", 'null': 'True', 'blank': 'True'}),
@@ -104,12 +148,29 @@ class Migration(SchemaMigration):
             'pwhash': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'}),
             'user': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['auth.User']", 'unique': 'True'})
         },
+        'bolibana.reportclass': {
+            'Meta': {'object_name': 'ReportClass'},
+            'cls': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '75'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
+            'period_cls': ('django.db.models.fields.CharField', [], {'max_length': '75'}),
+            'report_type': ('django.db.models.fields.CharField', [], {'max_length': '1'}),
+            'slug': ('django.db.models.fields.SlugField', [], {'max_length': '35', 'primary_key': 'True', 'db_index': 'True'})
+        },
         'bolibana.role': {
             'Meta': {'object_name': 'Role'},
             'level': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
             'permissions': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': "orm['bolibana.Permission']", 'null': 'True', 'blank': 'True'}),
             'slug': ('django.db.models.fields.SlugField', [], {'max_length': '15', 'primary_key': 'True', 'db_index': 'True'})
+        },
+        'bolibana.scheduledreporting': {
+            'Meta': {'unique_together': "(('report_class', 'entity'),)", 'object_name': 'ScheduledReporting'},
+            'end': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'entity_rcls_providers_ending'", 'null': 'True', 'to': "orm['bolibana.Period']"}),
+            'entity': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bolibana.Entity']"}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'level': ('django.db.models.fields.PositiveIntegerField', [], {}),
+            'report_class': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bolibana.ReportClass']"}),
+            'start': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'entity_rcls_providers_starting'", 'null': 'True', 'to': "orm['bolibana.Period']"})
         },
         'contenttypes.contenttype': {
             'Meta': {'ordering': "('name',)", 'unique_together': "(('app_label', 'model'),)", 'object_name': 'ContentType', 'db_table': "'django_content_type'"},

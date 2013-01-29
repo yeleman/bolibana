@@ -3,13 +3,15 @@
 # maintainer: rgaudin
 
 from Period import Period, MonthPeriod, YearPeriod, WeekPeriod, QuarterPeriod, DayPeriod
-from Entity import Entity
 from EntityType import EntityType
+from Entity import Entity
 from Report import Report
 from IndividualReport import IndividualReport
-from Access import Access
-from Options import Options
 from Permission import Permission
-from Provider import Provider
 from Role import Role
-from Project import Project
+from Access import Access
+from Provider import Provider
+from Options import Options
+from ReportClass import ReportClass
+from ExpectedReporting import ExpectedReporting
+from ScheduledReporting import ScheduledReporting

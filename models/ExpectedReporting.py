@@ -11,23 +11,24 @@ REPORTING_LEVELS = ((SOURCE_LEVEL, _(u"Source")),
                     (AGGREGATED_LEVEL, _(u"Aggregated")))
 
 
-class ReportProvider(models.Model):
+class ExpectedReporting(models.Model):
 
     class Meta:
         app_label = 'bolibana'
-        verbose_name = _(u"Report Provider")
-        verbose_name_plural = _(u"Report Providers")
-        unique_together = ('project', 'entity')
+        verbose_name = _(u"Expected Reporting")
+        verbose_name_plural = _(u"Expected Reportings")
+        unique_together = ('report_class', 'entity', 'period')
 
-    project = models.ForeignKey('Project')
+    report_class = models.ForeignKey('ReportClass')
     entity = models.ForeignKey('Entity')
+    period = models.ForeignKey('Period')
     level = models.PositiveIntegerField(choices=REPORTING_LEVELS,
                                         verbose_name=_(u"Reporting Level"))
 
     def __unicode__(self):
-        return (u"%(entity)s/%(project)s:%(level)s"
+        return (u"%(entity)s/%(report_class)s:%(level)s"
                 % {'entity': self.entity,
-                   'project': self.project,
+                   'report_class': self.report_class,
                    'level': self.verbose_level})
 
     @property
