@@ -31,6 +31,7 @@ class ExpectedReporting(models.Model):
                    'report_class': self.report_class,
                    'level': self.verbose_level})
 
+    @property
     def verbose_level(self):
         for level, name in REPORTING_LEVELS:
             if level == self.level:
