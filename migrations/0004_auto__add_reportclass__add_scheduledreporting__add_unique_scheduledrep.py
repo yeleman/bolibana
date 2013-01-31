@@ -7,11 +7,11 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        
+
         # Adding model 'ReportClass'
         db.create_table('bolibana_reportclass', (
-            ('slug', self.gf('django.db.models.fields.SlugField')(max_length=35, primary_key=True, db_index=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=50)),
+            ('slug', self.gf('django.db.models.fields.SlugField')(max_length=75, primary_key=True, db_index=True)),
+            ('name', self.gf('django.db.models.fields.CharField')(max_length=150)),
             ('cls', self.gf('django.db.models.fields.CharField')(unique=True, max_length=75)),
             ('period_cls', self.gf('django.db.models.fields.CharField')(max_length=75)),
             ('report_type', self.gf('django.db.models.fields.CharField')(max_length=1)),
@@ -47,7 +47,7 @@ class Migration(SchemaMigration):
 
 
     def backwards(self, orm):
-        
+
         # Removing unique constraint on 'ExpectedReporting', fields ['report_class', 'entity', 'period']
         db.delete_unique('bolibana_expectedreporting', ['report_class_id', 'entity_id', 'period_id'])
 
@@ -151,10 +151,10 @@ class Migration(SchemaMigration):
         'bolibana.reportclass': {
             'Meta': {'object_name': 'ReportClass'},
             'cls': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '75'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '150'}),
             'period_cls': ('django.db.models.fields.CharField', [], {'max_length': '75'}),
             'report_type': ('django.db.models.fields.CharField', [], {'max_length': '1'}),
-            'slug': ('django.db.models.fields.SlugField', [], {'max_length': '35', 'primary_key': 'True', 'db_index': 'True'})
+            'slug': ('django.db.models.fields.SlugField', [], {'max_length': '75', 'primary_key': 'True', 'db_index': 'True'})
         },
         'bolibana.role': {
             'Meta': {'object_name': 'Role'},
