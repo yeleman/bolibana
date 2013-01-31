@@ -45,6 +45,17 @@ class AddEntityForm(ModelForm):
             return None
 
 
+class AddScheduledReportingForm(ModelForm):
+        class Meta:
+            model = ScheduledReporting
+            exclude = ['report_class', 'entity', ]
+
+        def clean_level(self):
+            if self.cleaned_data.get('level') is None:
+                return -1
+            return self.cleaned_data.get('level')
+
+
 class EditEntityForm(ModelForm):
 
     class Meta:
@@ -56,26 +67,29 @@ class EditEntityForm(ModelForm):
 def add_edit_entity(request, entity_id=None, template='add_edit_entity.html'):
     context = {'category': 'entities'}
     report_class = ReportClass.objects.all()
+    scheduled_forms = []
 
     if entity_id:
         entity = get_object_or_404(Entity, id=entity_id)
 
         for report in report_class:
-            print report
             try:
-                ScheduledReporting.objects.get(report_class=report)
-            except:
-                Scheduled = ScheduledReporting(report_class=report,
+                ScheduledReporting.objects.get(report_class=report,
                                                entity=entity)
-                Scheduled.level = SOURCE_LEVEL
-                Scheduled.save()
+            except:
+                scheduled = ScheduledReporting(report_class=report,
+                                               entity=entity)
+                scheduled.level = SOURCE_LEVEL
+                scheduled.save()
+        for scheduled in ScheduledReporting.objects.filter(entity=entity):
+            scheduled_form = AddScheduledReportingForm(instance=scheduled)
+            scheduled_forms.append(scheduled_form)
         formclass = EditEntityForm
     else:
         entity = None
         formclass = AddEntityForm
 
     if request.method == 'POST':
-
         form = formclass(request.POST, instance=entity)
         if form.is_valid():
             entity = form.save()
@@ -90,11 +104,36 @@ def add_edit_entity(request, entity_id=None, template='add_edit_entity.html'):
         else:
             pass
 
+        if 'scheduled_id' in request.POST:
+            scheduled_form = AddScheduledReportingForm(request.POST)
+            scheduled_id = int(request.POST.get('scheduled_id', 0))
+            scheduled = ScheduledReporting.objects.get(id=scheduled_id)
+            if scheduled_form.is_valid():
+                level = scheduled_form.cleaned_data.get('level')
+
+                start = scheduled_form.cleaned_data.get('start')
+                end = scheduled_form.cleaned_data.get('end')
+
+                scheduled.level = level
+                scheduled.start = start
+                scheduled.end = end
+                scheduled.save()
+                message = _(u"Scheduled Reporting %(scheduled)s updated.") \
+                          % {'scheduled': scheduled.report_class}
+                messages.success(request, message)
+                return redirect(add_edit_entity, entity_id=entity_id)
+            else:
+                context.update({'fake_instance': scheduled})
+                for i, f in enumerate(scheduled_forms):
+                    if f.instance.id == scheduled_id:
+                        scheduled_forms[i] = scheduled_form
+                        break
+                form = formclass(instance=entity)
+
     # GET METHOD
     else:
         form = formclass(instance=entity)
-    scheduledreporting = ScheduledReporting.objects.all()
     context.update({'form': form, 'entity_id': entity_id, 'entity': entity,
-                    'scheduledreporting': scheduledreporting})
+                    'scheduled_forms': scheduled_forms})
 
     return render(request, template, context)

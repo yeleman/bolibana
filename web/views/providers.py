@@ -7,7 +7,7 @@ import logging
 from django import forms
 from django.http import Http404
 from django.contrib import messages
-from django.shortcuts import render, RequestContext, redirect
+from django.shortcuts import render, redirect
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.views.generic import ListView
 from mptt.fields import TreeNodeChoiceField
@@ -99,10 +99,10 @@ class EditProviderForm(forms.Form):
                 role = Role.objects.get(slug=self.cleaned_data.get('role'))
             except:
                 role = None
-            
+
             # get level if exist
             level = getattr(role, 'level', None)
-            
+
             if not level:
                 level = self.cleaned_data.get('role')
 
