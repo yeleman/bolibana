@@ -19,7 +19,8 @@ class ScheduledReporting(models.Model):
     report_class = models.ForeignKey('ReportClass')
     entity = models.ForeignKey('Entity')
     level = models.PositiveIntegerField(choices=REPORTING_LEVELS,
-                                        verbose_name=_(u"Reporting Level"))
+                                        verbose_name=_(u"Reporting Level"),
+                                        blank=False, null=False)
     start = models.ForeignKey('Period',
                               verbose_name=_(u"Start On"),
                               related_name='entity_rcls_providers_starting',
@@ -35,6 +36,7 @@ class ScheduledReporting(models.Model):
                    'report_class': self.report_class,
                    'level': self.verbose_level})
 
+    @property
     def verbose_level(self):
         for level, name in REPORTING_LEVELS:
             if level == self.level:

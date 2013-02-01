@@ -18,8 +18,8 @@ def import_path(name):
 
 class ReportClass(models.Model):
 
-    REGULAR = 1
-    INDIVIDUAL = 2
+    REGULAR = 'r'
+    INDIVIDUAL = 'i'
     REPORT_TYPES = ((REGULAR, _("Regular")),
                     (INDIVIDUAL, _(u"Individual")))
 
@@ -40,9 +40,9 @@ class ReportClass(models.Model):
         verbose_name = _(u"Report Class")
         verbose_name_plural = _(u"Report Classes")
 
-    slug = models.SlugField(_(u"Slug"), max_length=35, primary_key=True)
-    name = models.CharField(_(u"Name"), max_length=50)
-    cls = models.CharField(_(u"Name"), max_length=75, unique=True)
+    slug = models.SlugField(_(u"Slug"), max_length=75, primary_key=True)
+    name = models.CharField(_(u"Name"), max_length=150)
+    cls = models.CharField(_(u"cls"), max_length=75, unique=True)
     period_cls = models.CharField(_(u"Period Type"), max_length=75,
                                   choices=PERIOD_TYPES)
     report_type = models.CharField(_(u"Report Type"), max_length=1,
