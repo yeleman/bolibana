@@ -114,7 +114,7 @@ class EditProviderForm(forms.Form):
 
 @provider_permission('can_manage_users')
 def add_edit_user(request, user_id=None, template='add_edit_provider.html'):
-    context = {'category': 'users'}
+    context = {'category': 'admin', 'location': 'users'}
     web_provider = request.user.get_profile()
 
     if request.method == 'POST':

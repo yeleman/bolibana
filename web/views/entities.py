@@ -66,7 +66,7 @@ class EditEntityForm(ModelForm):
 
 @provider_permission('can_manage_entities')
 def add_edit_entity(request, entity_id=None, template='add_edit_entity.html'):
-    context = {'category': 'entities'}
+    context = {'category': 'admin', 'location': 'entities'}
     report_classes = ReportClass.objects.all()
     scheduled_forms = []
 
