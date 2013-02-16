@@ -31,7 +31,8 @@ class EntitiesListView(ListView):
     def get_context_data(self, **kwargs):
         context = super(EntitiesListView, self).get_context_data(**kwargs)
         # Add category
-        context['category'] = 'entities'
+        context['category'] = 'admin'
+        context['location'] = 'entities'
         return context
 
 
@@ -66,7 +67,7 @@ class EditEntityForm(ModelForm):
 
 @provider_permission('can_manage_entities')
 def add_edit_entity(request, entity_id=None, template='add_edit_entity.html'):
-    context = {'category': 'entities'}
+    context = {'category': 'admin', 'location': 'entities'}
     report_classes = ReportClass.objects.all()
     scheduled_forms = []
 

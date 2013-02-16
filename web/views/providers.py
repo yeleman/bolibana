@@ -33,7 +33,8 @@ class ProvidersListView(ListView):
     def get_context_data(self, **kwargs):
         context = super(ProvidersListView, self).get_context_data(**kwargs)
         # Add category
-        context['category'] = 'users'
+        context['category'] = 'admin'
+        context['location'] = 'users'
         return context
 
 
@@ -114,7 +115,7 @@ class EditProviderForm(forms.Form):
 
 @provider_permission('can_manage_users')
 def add_edit_user(request, user_id=None, template='add_edit_provider.html'):
-    context = {'category': 'users'}
+    context = {'category': 'admin', 'location': 'users'}
     web_provider = request.user.get_profile()
 
     if request.method == 'POST':
