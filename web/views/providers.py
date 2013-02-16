@@ -33,7 +33,8 @@ class ProvidersListView(ListView):
     def get_context_data(self, **kwargs):
         context = super(ProvidersListView, self).get_context_data(**kwargs)
         # Add category
-        context['category'] = 'users'
+        context['category'] = 'admin'
+        context['location'] = 'users'
         return context
 
 

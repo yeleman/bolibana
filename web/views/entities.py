@@ -31,7 +31,8 @@ class EntitiesListView(ListView):
     def get_context_data(self, **kwargs):
         context = super(EntitiesListView, self).get_context_data(**kwargs)
         # Add category
-        context['category'] = 'entities'
+        context['category'] = 'admin'
+        context['location'] = 'entities'
         return context
 
 
