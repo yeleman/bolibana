@@ -42,3 +42,21 @@ class ScheduledReporting(models.Model):
             if level == self.level:
                 return name
         return u"n/a"
+
+    @property
+    def casted_start(self):
+        try:
+            return self.report_class.period_class.find_create_with(
+                                                start_on=self.start.start_on,
+                                                end_on=self.start.end_on)
+        except:
+            return None
+
+    @property
+    def casted_end(self):
+        try:
+            return self.report_class.period_class.find_create_with(
+                                                start_on=self.end.start_on,
+                                                end_on=self.end.end_on)
+        except:
+            return None

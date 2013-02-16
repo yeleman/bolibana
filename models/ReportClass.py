@@ -5,15 +5,7 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-
-def import_path(name):
-    """ import a callable from full module.callable name """
-    modname, _, attr = name.rpartition('.')
-    if not modname:
-        # single module name
-        return __import__(attr)
-    m = __import__(modname, fromlist=[attr])
-    return getattr(m, attr)
+from bolibana.tools.utils import import_path
 
 
 class ReportClass(models.Model):

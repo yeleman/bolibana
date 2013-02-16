@@ -43,6 +43,16 @@ proverbs = [
 logger = logging.getLogger(__name__)
 
 
+def import_path(name):
+    """ import a callable from full module.callable name """
+    modname, __, attr = name.rpartition('.')
+    if not modname:
+        # single module name
+        return __import__(attr)
+    m = __import__(modname, fromlist=[attr])
+    return getattr(m, attr)
+
+
 def send_email(recipients, message=None, template=None, context={}, \
                title=None, title_template=None, sender=None):
     """ forge and send an email message
