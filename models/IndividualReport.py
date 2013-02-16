@@ -16,16 +16,16 @@ class IndividualReport(models.Model):
         verbose_name_plural = _(u"Individual Reports")
         abstract = True
 
-    created_by = models.ForeignKey('Provider', \
+    created_by = models.ForeignKey('Provider',
                                    related_name='%(app_label)s_' \
                                                 '%(class)s_reports',
                                    verbose_name=_(u"Created By"))
-    created_on = models.DateTimeField(auto_now_add=True, \
+    created_on = models.DateTimeField(auto_now_add=True,
                                       verbose_name=_(u"Created On"))
-    modified_by = models.ForeignKey('Provider', \
-                                    null=True, blank=True, \
+    modified_by = models.ForeignKey('Provider',
+                                    null=True, blank=True,
                                     verbose_name=_(u"Modified By"))
-    modified_on = models.DateTimeField(auto_now=True, \
+    modified_on = models.DateTimeField(auto_now=True,
                                        verbose_name=_(u"Modified On"))
 
     # django manager first
@@ -33,5 +33,5 @@ class IndividualReport(models.Model):
 
     def __unicode__(self):
         return ugettext(u"IDVR%(id)d - %(date)s") \
-                        % {'id': self.id, \
+                        % {'id': self.id,
                            'date': self.created_on.strftime('%d.%m.%Y')}

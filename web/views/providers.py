@@ -13,7 +13,8 @@ from django.views.generic import ListView
 from mptt.fields import TreeNodeChoiceField
 
 from bolibana.models import Role, Provider, Access
-from bolibana.auth.utils import username_from_name, random_password
+from bolibana.auth.utils import (username_from_name, random_password,
+                                 random_sample_password)
 from bolibana.models import Entity
 from bolibana.tools.utils import send_email, full_url, clean_phone_number
 from bolibana.web.decorators import provider_permission
@@ -40,28 +41,28 @@ class ProvidersListView(ListView):
 
 class EditProviderForm(forms.Form):
 
-    uid = forms.IntegerField(required=False, \
-                             widget=forms.widgets.HiddenInput(), \
+    uid = forms.IntegerField(required=False,
+                             widget=forms.widgets.HiddenInput(),
                              label=ugettext_lazy(u"User ID"))
-    first_name = forms.CharField(max_length=50, required=True, \
+    first_name = forms.CharField(max_length=50, required=True,
                                  label=ugettext_lazy(u"First Name"))
-    last_name = forms.CharField(max_length=50, required=True, \
+    last_name = forms.CharField(max_length=50, required=True,
                                 label=ugettext_lazy(u"Last Name"))
-    email = forms.EmailField(required=False, \
+    email = forms.EmailField(required=False,
                              label=ugettext_lazy(u"E-mail Address"))
-    phone_number = forms.CharField(max_length=12, required=False, \
+    phone_number = forms.CharField(max_length=12, required=False,
                                    label=ugettext_lazy(u"Phone Number"))
 
-    phone_number_extra = forms.CharField(max_length=12, required=False, \
+    phone_number_extra = forms.CharField(max_length=12, required=False,
                                    label=ugettext_lazy(u"Phone Number"))
 
-    role = forms.ChoiceField(label=ugettext_lazy(u"Role"), \
+    role = forms.ChoiceField(label=ugettext_lazy(u"Role"),
                              choices=[(role.slug, role.name) \
                                       for role \
                                       in Role.objects.all().order_by('name')])
 
-    entity = TreeNodeChoiceField(queryset=Entity.tree.all(), \
-                                 level_indicator=u'---', \
+    entity = TreeNodeChoiceField(queryset=Entity.tree.all(),
+                                 level_indicator=u'---',
                                  label=ugettext_lazy(u"Entity"))
 
     def clean_phone_number(self):
@@ -141,13 +142,15 @@ def add_edit_user(request, user_id=None, template='add_edit_provider.html'):
             else:
                 # forge username
                 username = username_from_name(\
-                                         form.cleaned_data.get('first_name'), \
+                                         form.cleaned_data.get('first_name'),
                                          form.cleaned_data.get('last_name'))
+
+                print username
                 # generate password
-                password = random_password()
+                password = random_password(username)
 
                 # create Provider
-                provider = Provider.create_provider(username, \
+                provider = Provider.create_provider(username,
                                                     'xx', access=[access])
                 provider.set_password(password)
             # we have a valid provider whatever the case. update details
@@ -167,12 +170,12 @@ def add_edit_user(request, user_id=None, template='add_edit_provider.html'):
 
             if not user_id and provider.email:
                 # send email with password on account creation
-                sent, sent_message = send_email(recipients=provider.email, \
-                                            context={'provider': provider, \
-                                                     'creator': web_provider, \
-                                                     'password': password, \
+                sent, sent_message = send_email(recipients=provider.email,
+                                            context={'provider': provider,
+                                                     'creator': web_provider,
+                                                     'password': password,
                                                      'url': full_url()},
-                                           template='emails/new_account.txt', \
+                                           template='emails/new_account.txt',
                                  title_template='emails/title.new_account.txt')
                 if sent:
                     messages.success(request, _(u"An e-mail containing the " \
@@ -184,12 +187,12 @@ def add_edit_user(request, user_id=None, template='add_edit_provider.html'):
                                               "to %(email)s. Please record " \
                                               "and forward the password: " \
                                               "%(pass)s") \
-                                            % {'email': provider.email, \
+                                            % {'email': provider.email,
                                                'pass': password})
                     # log exception
                     logger.warning(u"Unable to send email to %(email)s " \
                                    "with Exception %(e)r" \
-                                   % {'email': provider.email, \
+                                   % {'email': provider.email,
                                       'e': sent_message})
             # display password if user has no email address
             elif not user_id and not provider.email:
@@ -207,7 +210,7 @@ def add_edit_user(request, user_id=None, template='add_edit_provider.html'):
                 pass
                 #raise Http404
             try:
-                provider_data.update({'entity': provider.first_target().id, \
+                provider_data.update({'entity': provider.first_target().id,
                                       'role': provider.first_role().slug})
             except:
                 pass
@@ -221,8 +224,8 @@ def add_edit_user(request, user_id=None, template='add_edit_provider.html'):
             except Provider.DoesNotExist:
                 raise Http404
             try:
-                provider_data.update({'entity': provider.first_target().id, \
-                                      'role': provider.first_role().slug, \
+                provider_data.update({'entity': provider.first_target().id,
+                                      'role': provider.first_role().slug,
                                       'uid': provider.id})
             except:
                 pass
@@ -254,7 +257,7 @@ def enable_disable_user(request, user_id, activate):
         provider.save()
         messages.warning(request, _(u"%(provider)s status has been " \
                                     "changed to %(status)s") \
-                                  % {'provider': provider.name(), \
+                                  % {'provider': provider.name(),
                                      'status': _(u"active") \
                                                if provider.is_active \
                                                else _(u"inactive")})
@@ -262,7 +265,7 @@ def enable_disable_user(request, user_id, activate):
 
 
 @provider_permission('can_manage_users')
-def password_user(request, user_id):
+def password_user(request, user_id, pwd_id):
     """ Generate new password for user """
     web_provider = request.user.get_profile()
 
@@ -273,18 +276,21 @@ def password_user(request, user_id):
                       % {'id': int(user_id)})
 
     # generate and assign password
-    password = random_password()
+    if int(pwd_id) == 0:
+        password = random_password()
+    else:
+        password = random_sample_password()
     provider.set_password(password)
     provider.save()
 
     if provider.email:
         # send email with password on account creation
-        sent, sent_message = send_email(recipients=provider.email, \
-                                    context={'provider': provider, \
-                                             'creator': web_provider, \
-                                             'password': password, \
+        sent, sent_message = send_email(recipients=provider.email,
+                                    context={'provider': provider,
+                                             'creator': web_provider,
+                                             'password': password,
                                              'url': full_url()},
-                                   template='emails/new_password.txt', \
+                                   template='emails/new_password.txt',
                          title_template='emails/title.new_password.txt')
         if sent:
             messages.success(request, _(u"An e-mail containing the " \
@@ -296,12 +302,12 @@ def password_user(request, user_id):
                                       "to %(email)s. Please record " \
                                       "and forward the password: " \
                                       "%(pass)s") \
-                                    % {'email': provider.email, \
+                                    % {'email': provider.email,
                                        'pass': password})
             # log exception
             logger.warning(u"Unable to send email to %(email)s " \
                            "with Exception %(e)r" \
-                           % {'email': provider.email, \
+                           % {'email': provider.email,
                               'e': sent_message})
     # display password if user has no email address
     else:

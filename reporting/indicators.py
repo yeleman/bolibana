@@ -87,9 +87,9 @@ class IndicatorTable(object):
 
     # options common to all subclasses
     # can be override.
-    main_default_options = {'with_data': True, \
-                            'with_total': False, \
-                            'with_reference': True, \
+    main_default_options = {'with_data': True,
+                            'with_total': False,
+                            'with_reference': True,
                             'only_percent': False}
 
     # sub-class level default options
@@ -186,7 +186,7 @@ class IndicatorTable(object):
         is_blank = self.line_is_blank(name)
 
         # create stub dict for the line
-        line_data = {'label': self.get_line_label(name), 'values': {}, \
+        line_data = {'label': self.get_line_label(name), 'values': {},
                      'blank': is_blank, 'reference': self.line_is_ref(name)}
 
         if is_blank:
@@ -202,7 +202,7 @@ class IndicatorTable(object):
             # In that case, we'll just skip it.
             if not self.period_is_valid(period):
                 # default empty period dict
-                line_data['values'][pid] = {'value': None, \
+                line_data['values'][pid] = {'value': None,
                                                    'percent': None}
                 continue
 
@@ -219,7 +219,7 @@ class IndicatorTable(object):
         if self.options.with_total:
             line_data['total'] = \
                 {'value': sum(self.clean_list([l['value'] \
-                                    for l in line_data['values'].values()])), \
+                                    for l in line_data['values'].values()])),
                  'percent': 1}
 
         return line_data

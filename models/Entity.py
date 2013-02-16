@@ -18,13 +18,13 @@ class Entity(MPTTModel):
 
     name = models.CharField(_(u"Name"), max_length=50)
     slug = models.SlugField(_(u"Slug"), max_length=15, unique=True)
-    type = models.ForeignKey('EntityType', related_name='entities', \
+    type = models.ForeignKey('EntityType', related_name='entities',
                              verbose_name=_(u"Type"))
-    phone_number = models.CharField(max_length=12, unique=True, \
-                                    null=True, blank=True, \
+    phone_number = models.CharField(max_length=12, unique=True,
+                                    null=True, blank=True,
                                     verbose_name=_(u"Phone Number"))
-    parent = TreeForeignKey('self', null=True, blank=True, \
-                                                     related_name='children', \
+    parent = TreeForeignKey('self', null=True, blank=True,
+                                                     related_name='children',
                                                      verbose_name=_(u"Parent"))
 
     def __unicode__(self):
@@ -36,7 +36,7 @@ class Entity(MPTTModel):
     def display_full_name(self):
         if self.parent:
             return ugettext(u"%(name)s/%(parent)s") \
-                            % {'name': self.display_name(), \
+                            % {'name': self.display_name(),
                                'parent': self.parent.display_name()}
         return self.display_name()
 

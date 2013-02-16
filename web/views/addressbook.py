@@ -17,12 +17,12 @@ from nosmsd.utils import send_sms
 
 class AddressBookForm(forms.Form):
 
-    role = forms.ChoiceField(label=ugettext_lazy(u"Role"), \
+    role = forms.ChoiceField(label=ugettext_lazy(u"Role"),
                          choices=[('', _(u"All"))] + [(role.slug, role.name) \
                                   for role in Role.objects.all() \
                                                           .order_by('name')])
-    entity = TreeNodeChoiceField(queryset=Entity.tree.all(), \
-                                 level_indicator=u'---', \
+    entity = TreeNodeChoiceField(queryset=Entity.tree.all(),
+                                 level_indicator=u'---',
                                  label=ugettext_lazy(u"Entity"))
 
 
@@ -91,7 +91,7 @@ def adressbook_send_sms(request):
             for provider in providers:
                 send_sms(provider.phone_number,
                          form_msg.cleaned_data.get('text'))
-            messages.success(request, \
+            messages.success(request,
                              _(u"SMS en cours d'envoie à %d destinataires")
                              % providers.count())
             return redirect("log_message")

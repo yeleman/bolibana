@@ -9,6 +9,7 @@ import re
 from django.contrib.auth.models import User
 
 PASSWORD_LENGTH = 8
+PASSWORD_LENGTH_SAMPLE = 4
 USERNAME_MIN_LENGTH = 4
 USERNAME_MAX_LENGTH = 8
 
@@ -17,6 +18,26 @@ def random_password():
     """ random password suitable for mobile typing """
     return ''.join([random.choice('abcdefghijklmnopqrstuvwxyz1234567890') \
                         for i in range(PASSWORD_LENGTH)])
+
+
+def random_sample_password():
+    """ random sample password suitable for mobile typing """
+    num_chars = PASSWORD_LENGTH_SAMPLE
+    letters = 'abcdefghijklmnopqrstuvwxyz'
+    index = random.randint(0, len(letters) - 1)
+
+    password = letters[index]
+    num_chars -= 1
+    while num_chars:
+        num_chars -= 1
+        index += 1
+        try:
+            password += letters[index]
+        except IndexError:
+            password += letters[index - 26]
+    postfix = random.randint(0, 9)
+    password += str(postfix)
+    return(password)
 
 
 def username_from_name(first_name, last_name):
