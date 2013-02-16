@@ -104,6 +104,44 @@ class Period(models.Model):
     customs = CustomManager()
     django = models.Manager()
 
+    def __lt__(self, other):
+        try:
+            return self.end_on < other.start_on
+        except:
+            return NotImplemented
+
+    def __le__(self, other):
+        try:
+            return self.end_on <= other.end_on
+        except:
+            return NotImplemented
+
+    def __eq__(self, other):
+        try:
+            return self.start_on == other.start_on \
+                    and self.end_on == other.end_on
+        except:
+            return NotImplemented
+
+    def __ne__(self, other):
+        try:
+            return self.start_on != other.start_on \
+                or self.end_on != other.end_on
+        except:
+            return NotImplemented
+
+    def __gt__(self, other):
+        try:
+            return self.start_on > other.end_on
+        except:
+            return NotImplemented
+
+    def __ge__(self, other):
+        try:
+            return self.start_on >= other.start_on
+        except:
+            return NotImplemented
+
     def list_of_subs(self, cls):
         if cls == self.__class__:
             return [self]
