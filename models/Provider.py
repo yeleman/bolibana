@@ -31,16 +31,16 @@ class Provider(models.Model):
 
     user = models.OneToOneField(User, unique=True, verbose_name=_(u"User"))
 
-    phone_number = models.CharField(max_length=12, unique=True, \
-                                    null=True, blank=True, \
+    phone_number = models.CharField(max_length=12, unique=True,
+                                    null=True, blank=True,
                                     verbose_name=_(u"Phone Number"))
-    phone_number_extra = models.CharField(max_length=12, \
-                                    null=True, blank=True, \
+    phone_number_extra = models.CharField(max_length=12,
+                                    null=True, blank=True,
                                     verbose_name=_(u"Phone Number"))
-    access = models.ManyToManyField('Access', null=True, blank=True, \
+    access = models.ManyToManyField('Access', null=True, blank=True,
                                     verbose_name=_(u"Access"))
-    pwhash = models.CharField(max_length=255, \
-                                    null=True, blank=True, \
+    pwhash = models.CharField(max_length=255,
+                                    null=True, blank=True,
                                     verbose_name=_(u"Password Hash"))
 
     # django manager first
@@ -53,7 +53,7 @@ class Provider(models.Model):
     def name(self):
         """ prefered representation of the provider's name """
         if self.first_name and self.last_name:
-            return u"%(first)s %(last)s" % {'first': self.first_name.title(), \
+            return u"%(first)s %(last)s" % {'first': self.first_name.title(),
                                             'last': self.last_name.title()}
         if self.first_name:
             return self.first_name.title()
@@ -67,22 +67,22 @@ class Provider(models.Model):
         access = self.first_access()
         if access:
             return ugettext(u"%(name)s (%(access)s)") \
-                   % {'name': self.name(), \
+                   % {'name': self.name(),
                       'access': access.name()}
         else:
             return self.name()
 
     def to_dict(self):
-        return {'first_name': self.first_name, 'last_name': self.last_name, \
-                'username': self.username, 'phone_number': self.phone_number, \
-                'email': self.email, \
+        return {'first_name': self.first_name, 'last_name': self.last_name,
+                'username': self.username, 'phone_number': self.phone_number,
+                'email': self.email,
                 'phone_number_extra': self.phone_number_extra}
 
     @classmethod
-    def create_provider(cls, username, password, \
+    def create_provider(cls, username, password,
                         phone_number=None, access=None):
         """ shortcut creation of provider with its associated User """
-        user, created = User.objects.get_or_create(username=username, \
+        user, created = User.objects.get_or_create(username=username,
                                                    password=password)
         user.save()
         provider = user.get_profile()

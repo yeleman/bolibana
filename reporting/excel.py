@@ -9,7 +9,7 @@ import logging
 import xlrd
 from django.utils.translation import ugettext as _
 
-from bolibana.reporting.errors import (ErrorManager, MissingData, \
+from bolibana.reporting.errors import (ErrorManager, MissingData,
                                        IncorrectReportData)
 
 logger = logging.getLogger(__name__)
@@ -42,7 +42,7 @@ class ExcelTypeConverter(object):
         if cls.clean_str(value) in choicelist:
             return cls.clean_str(value)
         else:
-            raise ValueError(u"%s not in %s" % (cls.clean_str(value), \
+            raise ValueError(u"%s not in %s" % (cls.clean_str(value),
                                                 choicelist))
 
     @classmethod
@@ -51,7 +51,7 @@ class ExcelTypeConverter(object):
         if cls.clean_str(value) in choicemap:
             return choicemap[cls.clean_str(value)]
         else:
-            raise ValueError(u"%s not in %s" % (cls.clean_str(value), \
+            raise ValueError(u"%s not in %s" % (cls.clean_str(value),
                                                 choicemap.keys()))
 
     @classmethod
@@ -60,14 +60,14 @@ class ExcelTypeConverter(object):
         if int(value) in choicelist:
             return int(value)
         else:
-            raise ValueError(u"%s not in %s" % (cls.clean_str(value), \
+            raise ValueError(u"%s not in %s" % (cls.clean_str(value),
                                                 choicelist))
 
 
 class ExcelFormField(object):
     """ A field in an Excel form represented by its coordinates """
 
-    def __init__(self, coord, type=None, name=None, \
+    def __init__(self, coord, type=None, name=None,
                  cast_args=None, attr=None, *args, **kwargs):
         self.coord = coord
         self.type = type

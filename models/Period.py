@@ -90,8 +90,8 @@ class Period(models.Model):
 
     start_on = models.DateTimeField(_(u"Start On"))
     end_on = models.DateTimeField(_(u"End On"))
-    period_type = models.CharField(max_length=15, \
-                                   choices=PERIOD_TYPES, default=CUSTOM, \
+    period_type = models.CharField(max_length=15,
+                                   choices=PERIOD_TYPES, default=CUSTOM,
                                    verbose_name=_(u"Type"))
 
     objects = models.Manager()
@@ -210,8 +210,8 @@ class Period(models.Model):
         raise ValueError("Can not understand date object.")
 
     @classmethod
-    def find_create_from(cls, year, month=None, day=None, \
-                         week=None, hour=None, minute=None, second=None, \
+    def find_create_from(cls, year, month=None, day=None,
+                         week=None, hour=None, minute=None, second=None,
                          dont_create=False, is_iso=False):
 
         if not week and not month:
@@ -219,7 +219,7 @@ class Period(models.Model):
             sy = datetime(year, 1, 1, 0, 0)
             ey = sy.replace(year=year + 1) - timedelta(ONE_MICROSECOND)
             try:
-                period = cls.objects.filter(start_on__lte=sy, \
+                period = cls.objects.filter(start_on__lte=sy,
                                             end_on__gte=ey)[0]
             except IndexError:
                 period = cls.find_create_with(sy, ey)
@@ -268,10 +268,10 @@ class Period(models.Model):
         if not period_type:
             period_type = cls.type()
         try:
-            period = cls.objects.get(start_on=start_on, \
+            period = cls.objects.get(start_on=start_on,
                                      end_on=end_on, period_type=period_type)
         except cls.DoesNotExist:
-            period = cls(start_on=start_on, end_on=end_on, \
+            period = cls(start_on=start_on, end_on=end_on,
                          period_type=period_type)
             period.save()
         return period
@@ -343,7 +343,7 @@ class DayPeriod(Period):
 
     @classmethod
     def boundaries(cls, date_obj):
-        start = date_obj.replace(hour=0, minute=0, \
+        start = date_obj.replace(hour=0, minute=0,
                                  second=0, microsecond=0)
         end = start + timedelta(cls.delta()) - timedelta(ONE_MICROSECOND)
         return (start, end)
@@ -424,7 +424,7 @@ class MonthPeriod(Period):
     def boundaries(cls, date_obj):
         nyear, nmonth = next_month(date_obj.year, date_obj.month)
 
-        start = date_obj.replace(day=1, hour=0, minute=0, \
+        start = date_obj.replace(day=1, hour=0, minute=0,
                                  second=0, microsecond=0)
         end = start.replace(year=nyear, month=nmonth) \
               - timedelta(ONE_MICROSECOND)
@@ -484,7 +484,7 @@ class QuarterPeriod(Period):
     @classmethod
     def boundaries(cls, date_obj):
 
-        clean_start = date_obj.replace(month=1, day=1, hour=0, minute=0, \
+        clean_start = date_obj.replace(month=1, day=1, hour=0, minute=0,
                                        second=0, microsecond=0)
         clean_end = clean_start - timedelta(ONE_MICROSECOND)
         clean_end = clean_end.replace(year=date_obj.year)
@@ -533,7 +533,7 @@ class YearPeriod(Period):
 
     @classmethod
     def boundaries(cls, date_obj):
-        start = date_obj.replace(month=0, day=0, hour=0, minute=0, \
+        start = date_obj.replace(month=0, day=0, hour=0, minute=0,
                                  second=0, microsecond=0)
         end = start.replace(year=date_obj.year + 1) - timedelta(ONE_MICROSECOND)
         return (start, end)

@@ -12,20 +12,20 @@ from bolibana.web.decorators import provider_required
 
 class ProviderForm(forms.Form):
 
-    first_name = forms.CharField(max_length=50, required=False, \
+    first_name = forms.CharField(max_length=50, required=False,
                                  label=ugettext_lazy(u"First Name"))
-    last_name = forms.CharField(max_length=50, required=False, \
+    last_name = forms.CharField(max_length=50, required=False,
                                 label=ugettext_lazy(u"Last Name"))
-    email = forms.EmailField(required=False, \
+    email = forms.EmailField(required=False,
                              label=ugettext_lazy(u"E-mail Address"))
-    phone_number = forms.CharField(max_length=12, required=False, \
+    phone_number = forms.CharField(max_length=12, required=False,
                                    label=ugettext_lazy(u"Phone Number"))
-    phone_number_extra = forms.CharField(max_length=12, required=False, \
+    phone_number_extra = forms.CharField(max_length=12, required=False,
                                    label=ugettext_lazy(u"Phone Number"))
 
 
 class ProviderPasswordForm(forms.Form):
-    password1 = forms.CharField(max_length=100, \
+    password1 = forms.CharField(max_length=100,
                                 label=ugettext_lazy(u"New Password"),
                                 widget=forms.PasswordInput(render_value=False))
     password2 = forms.CharField(max_length=100,
@@ -79,7 +79,7 @@ def edit_profile(request, template='edit_profile.html'):
         form = ProviderForm(provider.to_dict())
         passwd_form = ProviderPasswordForm()
 
-    context.update({'form': form, 'passwd_form': passwd_form, \
+    context.update({'form': form, 'passwd_form': passwd_form,
                     'provider': provider})
 
     return render(request, template, context)

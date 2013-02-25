@@ -17,7 +17,7 @@ class Role(models.Model):
 
     name = models.CharField(_(u"Name"), max_length=50)
     slug = models.SlugField(_(u"Slug"), max_length=15, primary_key=True)
-    permissions = models.ManyToManyField('Permission', null=True, blank=True, \
+    permissions = models.ManyToManyField('Permission', null=True, blank=True,
                                          verbose_name=_(u"Permissions"))
     level = models.CharField(_(u"Level"), max_length=50, null=True, blank=True)
 

@@ -118,12 +118,12 @@ class Report(models.Model):
         verbose_name_plural = _(u"Reports")
         abstract = True
 
-    _status = models.PositiveIntegerField(choices=STATUSES, \
-                                          default=STATUS_CREATED, \
+    _status = models.PositiveIntegerField(choices=STATUSES,
+                                          default=STATUS_CREATED,
                                           verbose_name=_(u"Status"))
     type = models.PositiveIntegerField(choices=TYPES, verbose_name=_(u"Type"))
-    receipt = models.CharField(max_length=30, unique=True, \
-                               blank=True, null=False, \
+    receipt = models.CharField(max_length=30, unique=True,
+                               blank=True, null=False,
                                verbose_name=_(u"Receipt"))
     period = models.ForeignKey('Period',
                                related_name='%(app_label)s_' \
@@ -133,16 +133,16 @@ class Report(models.Model):
                                related_name='%(app_label)s_' \
                                             '%(class)s_reports',
                                verbose_name=_(u"Entity"))
-    created_by = models.ForeignKey('Provider', \
+    created_by = models.ForeignKey('Provider',
                                    related_name='%(app_label)s_' \
                                                 '%(class)s_reports',
                                    verbose_name=_(u"Created By"))
-    created_on = models.DateTimeField(auto_now_add=True, \
+    created_on = models.DateTimeField(auto_now_add=True,
                                       verbose_name=_(u"Created On"))
-    modified_by = models.ForeignKey('Provider', \
-                                    null=True, blank=True, \
+    modified_by = models.ForeignKey('Provider',
+                                    null=True, blank=True,
                                     verbose_name=_(u"Modified By"))
-    modified_on = models.DateTimeField(auto_now=True, \
+    modified_on = models.DateTimeField(auto_now=True,
                                        verbose_name=_(u"Modified On"))
 
     # django manager first
@@ -152,13 +152,13 @@ class Report(models.Model):
     complete = CompleteManager()
 
     def __unicode__(self):
-        return ugettext(u"%(entity)s/%(period)s") % {'entity': self.entity, \
+        return ugettext(u"%(entity)s/%(period)s") % {'entity': self.entity,
                                            'period': self.period}
 
     @classmethod
     def create(cls, period, entity, author, *args, **kwargs):
         """ create a blank report filling all non-required fields """
-        report = cls(period=period, entity=entity, created_by=author, \
+        report = cls(period=period, entity=entity, created_by=author,
                      modified_by=author, _status=cls.STATUS_UNSAVED)
         for arg, value in kwargs.items():
             try:
@@ -187,10 +187,10 @@ class Report(models.Model):
         DOW = ['D', 'L', 'M', 'E', 'J', 'V', 'S']
 
         receipt = '%(id)d/%(entity)s-%(day)s-%(dow)s' \
-                  % {'day': instance.created_on.strftime('%j'), \
-                     'dow': DOW[int(instance.created_on.strftime('%w'))], \
-                     'entity': instance.entity.slug, \
-                     'id': instance.id, \
+                  % {'day': instance.created_on.strftime('%j'),
+                     'dow': DOW[int(instance.created_on.strftime('%w'))],
+                     'entity': instance.entity.slug,
+                     'id': instance.id,
                      'period': instance.period.id}
         return receipt
 
