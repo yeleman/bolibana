@@ -2,17 +2,15 @@
 # encoding=utf-8
 # maintainer: rgaudin
 
-import re
 import locale
 
 from django import template
 from django.template.defaultfilters import stringfilter
 from django.utils.translation import ugettext as _
 from django.core.urlresolvers import reverse
-from django.contrib.humanize.templatetags.humanize import intcomma
 from babeldjango.templatetags.babel import datefmt
 
-from ..models import Report, Entity
+from ..models import Report
 from ..tools.utils import clean_phone_number
 
 locale.setlocale(locale.LC_ALL, '')
@@ -134,7 +132,7 @@ def number_format(value, precision=2, french=True):
         if french:
             return strnum_french(locale.format(format, value, grouping=True))
         return locale.format(format, value, grouping=True)
-    except Exception as e:
+    except Exception:
         pass
     return value
 
@@ -150,14 +148,20 @@ def concat_strings(value, value2):
 
 @register.filter(name='url')
 @stringfilter
-def retrieve_url(url_name, arg1=None, arg2=None, arg3=None, arg4=None):
-    args = [arg1, arg2, arg3, arg4]
+def retrieve_url(url_name, args):
+    args = args.split("|")
     while True:
         try:
             args.remove(None)
         except ValueError:
             break
     return reverse(url_name, args=args)
+
+
+@register.filter(name='url0')
+@stringfilter
+def retrieve_url_zero(url_name, args):
+    return retrieve_url(url_name, args + '|0')
 
 
 @register.filter(name='index')
@@ -208,7 +212,7 @@ def region_from_slug(entity):
 
 
 @register.filter(name='district')
-def region_from_slug(entity):
+def district_from_slug(entity):
     return get_parent_by_type(entity, 'district')
 
 
@@ -253,6 +257,7 @@ def provider_has_permission(provider, perm_slug=None):
 def data_sort(data):
     return sorted(data)
 
+
 @register.filter(name='elipstrunc')
 @stringfilter
 def elipstrunc(text, nbchars=50):
@@ -278,3 +283,29 @@ def graph_date_fmt(date_obj, periods=1):
     else:
         fmt = "MMMM YYYY"
     return datefmt(date_obj, fmt)
+
+
+@register.filter(name='dynfilter')
+def dynfilter(obj, params):
+
+    if '|' in params:
+        func, args = params.split('|', 1)
+        args = args.split('|')
+    else:
+        func = params
+
+    prop =  getattr(obj, func)
+
+    if prop:
+        try:
+            return prop(*args)
+        except:
+            return prop()
+
+    try:
+        return func(obj, *args)
+    except:
+        try:
+            return func(obj)
+        except:
+            return obj
