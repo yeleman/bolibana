@@ -11,6 +11,7 @@ from django.core import mail
 from django.conf import settings
 from django.template import loader, Context
 from django.utils.translation import ugettext as _
+from django.utils import timezone
 from django.contrib.sites.models import Site, get_current_site
 from django.contrib.auth.models import ContentType
 
@@ -324,3 +325,15 @@ def generate_user_hash(username, password, algo=None):
     for x in range(0, 2000):
         val = str(binascii.crc32(val))
     return val
+
+
+def normalize_date(target, as_aware=True):
+    target_is_aware = timezone.is_aware(target)
+    if as_aware and target_is_aware:
+        return target
+    elif as_aware and not target_is_aware:
+        # make foreign object aware (assume UTC)
+        return timezone.make_aware(target, timezone.utc)
+    else:
+        # make forign object naive
+        return timezone.make_naive(target, timezone.utc)

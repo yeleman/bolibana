@@ -7,6 +7,7 @@ from django.dispatch import receiver
 from django.db.models.signals import pre_save
 from django.utils.translation import ugettext_lazy as _, ugettext
 from mptt.models import MPTTModel, TreeForeignKey
+from mptt.managers import TreeManager
 
 
 class Entity(MPTTModel):
@@ -26,6 +27,8 @@ class Entity(MPTTModel):
     parent = TreeForeignKey('self', null=True, blank=True,
                                                      related_name='children',
                                                      verbose_name=_(u"Parent"))
+
+    objects = TreeManager()
 
     def __unicode__(self):
         return self.name

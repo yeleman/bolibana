@@ -5,8 +5,10 @@
 from datetime import datetime, date, timedelta
 
 from django.db import models
+from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _, ugettext
 
+from bolibana.tools.utils import normalize_date
 from bolibana.reporting.utils import next_month
 
 ONE_SECOND = 0.0001
@@ -106,41 +108,53 @@ class Period(models.Model):
 
     def __lt__(self, other):
         try:
-            return self.end_on < other.start_on
+            return self.end_on < self.normalize_date(other.start_on)
         except:
             return NotImplemented
 
     def __le__(self, other):
         try:
-            return self.end_on <= other.end_on
+            return self.end_on <= self.normalize_date(other.end_on)
         except:
             return NotImplemented
 
     def __eq__(self, other):
         try:
-            return self.start_on == other.start_on \
-                    and self.end_on == other.end_on
+            return self.pid == other.pid
         except:
             return NotImplemented
 
     def __ne__(self, other):
         try:
-            return self.start_on != other.start_on \
-                or self.end_on != other.end_on
+            return self.start_on != self.normalize_date(other.start_on) \
+                or self.end_on != self.normalize_date(other.end_on)
         except:
             return NotImplemented
 
     def __gt__(self, other):
         try:
-            return self.start_on > other.end_on
+            return self.start_on > self.normalize_date(other.end_on)
         except:
             return NotImplemented
 
     def __ge__(self, other):
         try:
-            return self.start_on >= other.start_on
+            return self.start_on >= self.normalize_date(other.start_on)
         except:
             return NotImplemented
+
+    def normalize_date(self, obj):
+        return normalize_date(obj, as_aware=self.is_aware())
+
+    def is_aware(self):
+        s = timezone.is_aware(self.start_on)
+        e = timezone.is_aware(self.end_on)
+        if not s == e:
+            raise TypeError(u"Period boundaries can't mix naive and TZ aware")
+        return s and e
+
+    def is_naive(self):
+        return not self.is_aware()
 
     def list_of_subs(self, cls):
         if cls == self.__class__:
@@ -152,6 +166,9 @@ class Period(models.Model):
             n = cls.find_create_by_date(n.start_on + timedelta(cls.delta()),
                                         dont_create=True)
         return d
+
+    def cast(self, cls):
+        self.__class__ = cls
 
     @property
     def days(self):
@@ -237,6 +254,8 @@ class Period(models.Model):
          * datetime instance
          * date instance
          * integer (year) '''
+
+        date_obj = self.normalize_date(date_obj)
         if isinstance(date, date_obj):
             date_obj = datetime(date.year, date.month, date.day, 12, 0)
         if isinstance(datetime, date_obj):
@@ -254,7 +273,7 @@ class Period(models.Model):
 
         if not week and not month:
             # assume year search
-            sy = datetime(year, 1, 1, 0, 0)
+            sy = datetime(year, 1, 1, 0, 0, tzinfo=timezone.utc)
             ey = sy.replace(year=year + 1) - timedelta(ONE_MICROSECOND)
             try:
                 period = cls.objects.filter(start_on__lte=sy,
@@ -273,7 +292,8 @@ class Period(models.Model):
         minute = minute if minute else 0
         second = second if second else 0
 
-        date_obj = datetime(year, month, day, hour, minute, second)
+        date_obj = datetime(year, month, day, hour, minute, second,
+                            tzinfo=timezone.utc)
 
         period = cls.find_create_by_date(date_obj, dont_create)
 
@@ -286,8 +306,10 @@ class Period(models.Model):
             date_obj = datetime.fromtimestamp(float(date_obj.strftime('%s')))
             date_obj = datetime(date_obj.year, date_obj.month,
                                          date_obj.day, date_obj.hour,
-                                         date_obj.minute, 1)
+                                         date_obj.minute, 1,
+                                tzinfo=timezone.utc)
 
+        date_obj = normalize_date(date_obj, as_aware=True)
         try:
             period = [period for period in cls.objects.all() \
                                         if period.start_on <= date_obj \
@@ -303,6 +325,8 @@ class Period(models.Model):
     @classmethod
     def find_create_with(cls, start_on, end_on, period_type=None):
         ''' creates a period with defined start and end dates '''
+        start_on = normalize_date(start_on, as_aware=True)
+        end_on = normalize_date(end_on, as_aware=True)
         if not period_type:
             period_type = cls.type()
         try:
@@ -327,7 +351,7 @@ class Period(models.Model):
         # d = soy + timedelta(WeekPeriod.delta() * weeknum)
         # return cls.find_create_by_date(d)
 
-        sy = datetime(year, 1, 1, 0, 0)
+        sy = datetime(year, 1, 1, 0, 0, tzinfo=timezone.utc)
         # ey = datetime(year, 12, 31, 23, 59)
         ONE_WEEK = WeekPeriod.delta()
 
@@ -356,6 +380,11 @@ class Period(models.Model):
         return YearPeriod.find_create_from(year, dont_create=True) \
                          .quarters_[quarter - 1]
 
+    @classmethod
+    def current(cls, dont_create=False):
+        return cls.find_create_by_date(date_obj=date.today(),
+                                       dont_create=dont_create)
+
 
 class DayPeriod(Period):
 
@@ -373,7 +402,11 @@ class DayPeriod(Period):
 
     def name(self):
         # Translators: Python's date format for DayPeriod.name()
-        return self.middle().strftime(ugettext('%x'))
+        return self.middle().strftime(ugettext(u"%x")).decode('utf-8')
+
+    def full_name(self):
+        # Translators: Python's date format for DayPeriod.full_name()
+        return self.middle().strftime(ugettext(u"%Y %B %d")).decode('utf-8')
 
     @classmethod
     def delta(self):
@@ -381,13 +414,15 @@ class DayPeriod(Period):
 
     @classmethod
     def boundaries(cls, date_obj):
+        date_obj = normalize_date(date_obj, as_aware=True)
+
         start = date_obj.replace(hour=0, minute=0,
                                  second=0, microsecond=0)
         end = start + timedelta(cls.delta()) - timedelta(ONE_MICROSECOND)
         return (start, end)
 
     def strid(self):
-        return self.middle().strftime('%d-%m%Y')
+        return self.middle().strftime('%d-%m-%Y')
 
 
 class WeekPeriod(Period):
@@ -404,9 +439,20 @@ class WeekPeriod(Period):
     def type(cls):
         return cls.WEEK
 
+    @property
+    def pid(self):
+        return u'W%s' % self.middle().strftime('%W-%Y')
+
     def name(self):
-        # Translators: Python's date format for DayPeriod.name()
-        return self.middle().strftime(ugettext('%W/%Y'))
+        # Translators: Python's date format for WeekPeriod.name()
+        return self.middle().strftime(ugettext(u"%W/%Y")).decode('utf-8')
+
+    def full_name(self):
+        # Translators: Week Full name representation: weeknum, start and end
+        return (u"Week %(weeknum)s (%(start)s to %(end)s)"
+                % {'weeknum': self.middle().strftime(ugettext(u"%W")).decode('utf-8'),
+                   'start': self.start_on.strftime(ugettext(u"%d %b")).decode('utf-8'),
+                   'end': self.end_on.strftime(ugettext(u"%d %b %Y")).decode('utf-8')})
 
     @classmethod
     def delta(self):
@@ -414,6 +460,7 @@ class WeekPeriod(Period):
 
     @classmethod
     def boundaries(cls, date_obj):
+        date_obj = normalize_date(date_obj, as_aware=True)
 
         start = date_obj - timedelta(date_obj.weekday())
         start = start.replace(hour=0, minute=0, second=0, microsecond=0)
@@ -421,7 +468,7 @@ class WeekPeriod(Period):
         return (start, end)
 
     def strid(self):
-        return self.middle().strftime('%W-%Y')
+        return self.middle().strftime('W%W-%Y')
 
 
 class MonthPeriod(Period):
@@ -444,15 +491,11 @@ class MonthPeriod(Period):
 
     def name(self):
         # Translators: Python's date format for MonthPeriod.name()
-        return ugettext(u"%(formatted_date)s") % \
-                 {'formatted_date': self.middle().strftime(ugettext('%m %Y'))}
+        return self.middle().strftime(ugettext(u"%m %Y")).decode('utf-8')
 
     def full_name(self):
         # Translators: Python's date format for MonthPeriod.full_name()
-        return ugettext(u"%(formatted_date)s") % \
-                 {'formatted_date': self.middle()\
-                                        .strftime(ugettext('%B %Y'))\
-                                        .decode('utf-8')}
+        return self.middle().strftime(ugettext(u"%B %Y")).decode('utf-8')
 
     @classmethod
     def delta(self):
@@ -460,6 +503,8 @@ class MonthPeriod(Period):
 
     @classmethod
     def boundaries(cls, date_obj):
+        date_obj = normalize_date(date_obj, as_aware=True)
+
         nyear, nmonth = next_month(date_obj.year, date_obj.month)
 
         start = date_obj.replace(day=1, hour=0, minute=0,
@@ -503,17 +548,43 @@ class QuarterPeriod(Period):
         return 'Q%d.%s' % (self.quarter, self.middle().strftime('%Y'))
 
     def name(self):
-        # Translators: Python's date format for MonthPeriod.name()
-        return ugettext(u"Q%(quarter)s.%(formatted_date)s") % \
-                 {'formatted_date': self.middle().strftime(ugettext('%Y')),
-                  'quarter': self.quarter}
+        # Translators: Python's date format for QuarterPeriod.name()
+        return (ugettext(u"Q%(quarter)s.%(year)s")
+                % {'year': self.middle().strftime(ugettext(u"%Y")).decode('utf-8'),
+                   'quarter': self.quarter})
 
     def full_name(self):
-        # Translators: Python's date format for MonthPeriod.full_name()
-        return ugettext(u"%(formatted_date)s") % \
-                 {'formatted_date': self.middle()\
-                                        .strftime(ugettext('%B %Y'))\
-                                        .decode('utf-8')}
+        def ordinal(value):
+            try:
+                value = int(value)
+            except ValueError:
+                return value
+
+            if value % 100//10 != 1:
+                if value % 10 == 1:
+                    # Translators: suffix for 1st
+                    ordval = u"%d%s" % (value, ugettext("st"))
+                elif value % 10 == 2:
+                    # Translators: suffix for 2nd
+                    ordval = u"%d%s" % (value, ugettext("nd"))
+                elif value % 10 == 3:
+                    # Translators: suffix for 3rd
+                    ordval = u"%d%s" % (value, ugettext("rd"))
+                else:
+                    # Translators: suffix for 4th
+                    ordval = u"%d%s" % (value, ugettext("th"))
+            else:
+                # Translators: suffix for 5th
+                ordval = u"%d%s" % (value, ugettext("th"))
+
+            return ordval
+
+        # Translators: Python's date format for QuarterPeriod.full_name()
+        return (u"%(ordinal_quarter)s Quarter %(year)s (%(start)s to %(end)s)"
+                % {'ordinal_quarter': ordinal(self.quarter),
+                   'year': self.middle().strftime(ugettext(u"%Y")).decode('utf-8'),
+                   'start': self.start_on.strftime(ugettext(u"%B")).decode('utf-8'),
+                   'end': self.end_on.strftime(ugettext(u"%B %Y")).decode('utf-8')})
 
     @classmethod
     def delta(self):
@@ -521,6 +592,8 @@ class QuarterPeriod(Period):
 
     @classmethod
     def boundaries(cls, date_obj):
+
+        date_obj = normalize_date(date_obj, as_aware=True)
 
         clean_start = date_obj.replace(month=1, day=1, hour=0, minute=0,
                                        second=0, microsecond=0)
@@ -543,7 +616,7 @@ class QuarterPeriod(Period):
         return (start, end)
 
     def strid(self):
-        return '%s-%s' % (str(self.quarter).zfill(2),
+        return 'Q%s-%s' % (str(self.quarter).zfill(2),
                           self.middle().strftime('%Y'))
 
 
@@ -563,7 +636,10 @@ class YearPeriod(Period):
 
     def name(self):
         # Translators: Python's date format for YearPeriod.name()
-        return self.middle().strftime(ugettext('%Y'))
+        return self.middle().strftime(ugettext(u"%Y")).decode('utf-8')
+
+    def full_name(self):
+        return self.name()
 
     @classmethod
     def delta(self):
@@ -571,6 +647,8 @@ class YearPeriod(Period):
 
     @classmethod
     def boundaries(cls, date_obj):
+        date_obj = normalize_date(date_obj, as_aware=True)
+
         start = date_obj.replace(month=0, day=0, hour=0, minute=0,
                                  second=0, microsecond=0)
         end = start.replace(year=date_obj.year + 1) - timedelta(ONE_MICROSECOND)

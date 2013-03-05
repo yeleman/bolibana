@@ -74,7 +74,7 @@ class Http500Middleware(object):
             if settings.DEBUG == True:
                 raise exception
             # if not, display access_error and load it with exception details
-            message = u"%s: %s" % (exception.__class__.__name__, \
+            message = u"%s: %s" % (exception.__class__.__name__,
                                    str(exception))
             return access_error(request, message)
 
