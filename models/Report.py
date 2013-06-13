@@ -58,21 +58,21 @@ class UnValidatedManager(models.Manager):
 
     def get_query_set(self):
         return super(UnValidatedManager, self).get_query_set() \
-                        .filter(_status__in=unvalidated_status())
+            .filter(_status__in=unvalidated_status())
 
 
 class ValidatedManager(models.Manager):
 
     def get_query_set(self):
         return super(ValidatedManager, self).get_query_set() \
-                        .filter(_status__in=validated_status())
+            .filter(_status__in=validated_status())
 
 
 class CompleteManager(models.Manager):
 
     def get_query_set(self):
         return super(CompleteManager, self).get_query_set() \
-                        .filter(_status__in=complete_status())
+            .filter(_status__in=complete_status())
 
 
 class Report(models.Model):
@@ -126,15 +126,15 @@ class Report(models.Model):
                                blank=True, null=False,
                                verbose_name=_(u"Receipt"))
     period = models.ForeignKey('Period',
-                               related_name='%(app_label)s_' \
+                               related_name='%(app_label)s_'
                                             '%(class)s_reports',
                                verbose_name=_(u"Period"))
     entity = models.ForeignKey('Entity',
-                               related_name='%(app_label)s_' \
+                               related_name='%(app_label)s_'
                                             '%(class)s_reports',
                                verbose_name=_(u"Entity"))
     created_by = models.ForeignKey('Provider',
-                                   related_name='%(app_label)s_' \
+                                   related_name='%(app_label)s_'
                                                 '%(class)s_reports',
                                    verbose_name=_(u"Created By"))
     created_on = models.DateTimeField(auto_now_add=True,
@@ -152,8 +152,9 @@ class Report(models.Model):
     complete = CompleteManager()
 
     def __unicode__(self):
-        return ugettext(u"%(entity)s/%(period)s") % {'entity': self.entity,
-                                           'period': self.period}
+        return ugettext(u"%(entity)s/%(period)s") \
+            % {'entity': self.entity,
+               'period': self.period}
 
     @classmethod
     def create(cls, period, entity, author, *args, **kwargs):

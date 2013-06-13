@@ -18,9 +18,9 @@ from nosmsd.utils import send_sms
 class AddressBookForm(forms.Form):
 
     role = forms.ChoiceField(label=ugettext_lazy(u"Role"),
-                         choices=[('', _(u"All"))] + [(role.slug, role.name) \
-                                  for role in Role.objects.all() \
-                                                          .order_by('name')])
+                             choices=[('', _(u"All"))] + [(role.slug, role.name)
+                                                          for role in Role.objects.all()
+                                                                          .order_by('name')])
     entity = TreeNodeChoiceField(queryset=Entity.tree.all(),
                                  level_indicator=u'---',
                                  label=ugettext_lazy(u"Entity"))
@@ -44,14 +44,14 @@ def addressbook(request, template='addressbook.html'):
         providers = Provider.objects.all()
 
         if request.POST.get('role'):
-            providers = providers.filter(access__role__slug=request \
+            providers = providers.filter(access__role__slug=request
                                  .POST.get('role'), user__is_active=True)
 
         if request.POST.get('entity'):
             entity = Entity.objects.get(id=request.POST.get('entity'))
-            providers = providers.filter(access__object_id__in=[entity.id] \
-                                    + [e.id for e in entity.get_descendants()],
-                                    user__is_active=True)
+            providers = providers.filter(access__object_id__in=[entity.id]
+                                         + [e.id for e in entity.get_descendants()],
+                                         user__is_active=True)
 
         context.update({'contacts': providers})
     else:
@@ -76,14 +76,14 @@ def adressbook_send_sms(request):
             entity_id = 1
 
         if role_slug:
-            providers = providers.filter(access__role__slug=request \
+            providers = providers.filter(access__role__slug=request
                                  .POST.get('role'), user__is_active=True)
 
         if entity_id:
             entity = Entity.objects.get(id=entity_id)
-            providers = providers.filter(access__object_id__in=[entity.id] \
-                                    + [e.id for e in entity.get_descendants()],
-                                    user__is_active=True)
+            providers = providers.filter(access__object_id__in=[entity.id]
+                                         + [e.id for e in entity.get_descendants()],
+                                         user__is_active=True)
 
         is_everything = not role_slug and entity_id == 1
 
@@ -97,6 +97,6 @@ def adressbook_send_sms(request):
             return redirect("log_message")
         else:
             messages.error(request,
-                            _(u"SMS non envoyé : Vous demandez" \
-                            u"d'envoyer un SMS a tous les utisateurs"))
+                           _(u"SMS non envoyé : Vous demandez"
+                             u"d'envoyer un SMS a tous les utisateurs"))
             return redirect(addressbook)

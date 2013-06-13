@@ -21,7 +21,7 @@ proverbs = [
     ('bm', u"dɔlɔ tɛ bɔ bɛɛ ka fɔ la",
      u"La bière n'est pas préparée à la demande de n'importe qui."),
     ('bm', u"hakilima bɛɛ ye kulu kuncɛmana dɔn fuga ye",
-     u"Tout homme raisonnable sait que sur la montagne " \
+     u"Tout homme raisonnable sait que sur la montagne "
      u"il y a une surface plate."),
     ('bm', u"ji ma masa dɔn", u"Le fleuve ne connaît pas le roi."),
     ('bm', u"mɔgɔ fila la tuma dɔ tɛ kelen ye",
@@ -95,15 +95,15 @@ def send_email(recipients, message=None, template=None, context={},
         email_msg = message
 
     # if no title provided, use default one. empty title allowed
-    if title == None and not title_template:
+    if title is None and not title_template:
         email_subject = _(u"Message from %(site)s") \
-                        % {'site': Site.objects.get_current().name}
+            % {'site': Site.objects.get_current().name}
 
     # build email subject. rendered template has priority
     if title_template:
         email_subject = loader.get_template(title_template)\
-                                                      .render(Context(context))
-    elif title != None:
+                              .render(Context(context))
+    elif title is not None:
         email_subject = title
 
     # title can't contain new line
@@ -179,7 +179,7 @@ def clean_phone_number(number):
     # is in international format?
     if is_int(re.sub(r'[\-\s]', '', number)):
         h, indicator, clean_number = \
-                            clean_number.partition(get_indicator(clean_number))
+            clean_number.partition(get_indicator(clean_number))
         return (indicator, clean_number)
     return (None, clean_number)
 
@@ -195,13 +195,13 @@ def provider_can(permission, provider, entity=None):
     for access in provider.access.all():
         if access.role.permissions.filter(slug=permission).count() > 0:
             # provider as access. Not entity was queried.
-            if entity == None:
+            if entity is None:
                 return True
 
             # if entity was queried, we need to find out if entity is
             # within the descendants of provider's one.
             if entity == access.target \
-            or entity in access.target.get_descendants():
+               or entity in access.target.get_descendants():
                 return True
     return False
 
@@ -214,11 +214,11 @@ def provider_can_or_403(permission, provider, entity):
     else:
         if entity:
             message = _(u"You don't have permission %(perm)s on %(entity)s") \
-                      % {'perm': permission,
-                         'entity': entity.display_full_name()}
+                % {'perm': permission,
+                   'entity': entity.display_full_name()}
         else:
             message = _(u"You don't have permission %(perm)s") \
-                      % {'perm': permission}
+                % {'perm': permission}
         raise Http403(message)
 
 
@@ -247,10 +247,10 @@ def get_level_for(provider):
     # based on number of descendants
     # in the entities hierarchy
     best_access = provider.first_access() or \
-                  Access.objects.get(role=Role.objects.get(slug='guest'),
-                  object_id=1,
-                  content_type=ContentType.objects.get(\
-                               app_label='bolibana_reporting', model='entity'))
+        Access.objects.get(role=Role.objects.get(slug='guest'),
+                           object_id=1,
+                           content_type=ContentType.objects.get(app_label='bolibana_reporting',
+                                                                model='entity'))
 
     return best_access.target.type.slug
 
@@ -303,13 +303,13 @@ def generate_receipt(instance, fix='', add_random=False, format=None):
                 break
 
         value_dict = {'day': instance.created_on.strftime('%j'),
-                     'dow': DOW[int(instance.created_on.strftime('%w'))],
-                     'entity': instance.entity.slug,
-                     'id': instance.id,
-                     'period': instance.period.id,
-                     'region': region,
-                     'fix': fix,
-                     'rand': rand_part}
+                      'dow': DOW[int(instance.created_on.strftime('%w'))],
+                      'entity': instance.entity.slug,
+                      'id': instance.id,
+                      'period': instance.period.id,
+                      'region': region,
+                      'fix': fix,
+                      'rand': rand_part}
 
         receipt = format % value_dict
         return receipt

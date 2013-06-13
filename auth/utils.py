@@ -16,8 +16,8 @@ USERNAME_MAX_LENGTH = 8
 
 def random_password():
     """ random password suitable for mobile typing """
-    return ''.join([random.choice('abcdefghijklmnopqrstuvwxyz1234567890') \
-                        for i in range(PASSWORD_LENGTH)])
+    return ''.join([random.choice('abcdefghijklmnopqrstuvwxyz1234567890')
+                    for i in range(PASSWORD_LENGTH)])
 
 
 def random_sample_password():

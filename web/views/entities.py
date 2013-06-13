@@ -98,10 +98,10 @@ def add_edit_entity(request, entity_id=None, template='add_edit_entity.html'):
             entity = form.save()
             if entity_id:
                 message = _(u"Entity %(entity)s updated.") \
-                          % {'entity': entity.display_full_name()}
+                    % {'entity': entity.display_full_name()}
             else:
                 message = _(u"Entity %(entity)s created.") \
-                          % {'entity': entity.display_full_name()}
+                    % {'entity': entity.display_full_name()}
             messages.success(request, message)
             return redirect('list_entities')
         else:
@@ -128,7 +128,7 @@ def add_edit_entity(request, entity_id=None, template='add_edit_entity.html'):
                 scheduled.start = start
                 scheduled.end = end
                 scheduled.save()
-                message = _(u"Reporting activities of this Entity have" \
+                message = _(u"Reporting activities of this Entity have"
                             u" been updated.")
                 messages.success(request, message)
                 return redirect(add_edit_entity, entity_id=entity_id)

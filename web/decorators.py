@@ -25,9 +25,9 @@ def provider_required(target):
             # if user is logged-in (non-provider)
             # send him a message
             if request.user.is_authenticated():
-                messages.error(request, _(u"The credentials you are " \
-                                          "using to log in are not " \
-                                          "valid. Please contact ANTIM."))
+                messages.error(request, _(u"The credentials you are "
+                                          u"using to log in are not "
+                                          u"valid. Please contact ANTIM."))
             # then foward logged-in or not to the login page.
             # logged-in users will see message there.
             return redirect('/login')

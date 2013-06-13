@@ -21,11 +21,11 @@ class ReportClass(models.Model):
     QUARTER = 'QuarterPeriod'
     YEAR = 'YearPeriod'
     PERIOD_TYPES = (
-            (DAY, _(u"Daily")),
-            (WEEK, _(u"Weekly")),
-            (MONTH, _(u"Monthly")),
-            (QUARTER, _(u"Quarterly")),
-            (YEAR, _(u"Annualy")))
+        (DAY, _(u"Daily")),
+        (WEEK, _(u"Weekly")),
+        (MONTH, _(u"Monthly")),
+        (QUARTER, _(u"Quarterly")),
+        (YEAR, _(u"Annualy")))
 
     class Meta:
         app_label = 'bolibana'
@@ -38,7 +38,7 @@ class ReportClass(models.Model):
     period_cls = models.CharField(_(u"Period Type"), max_length=75,
                                   choices=PERIOD_TYPES)
     report_type = models.CharField(_(u"Report Type"), max_length=1,
-                                  choices=REPORT_TYPES)
+                                   choices=REPORT_TYPES)
 
     def __unicode__(self):
         return self.name

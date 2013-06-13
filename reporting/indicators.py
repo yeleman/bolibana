@@ -203,23 +203,24 @@ class IndicatorTable(object):
             if not self.period_is_valid(period):
                 # default empty period dict
                 line_data['values'][pid] = {'value': None,
-                                                   'percent': None}
+                                            'percent': None}
                 continue
 
             # get the raw value for that period
             line_data['values'][pid] = \
-                               {'value': self.get_indicator_data(name, period)}
+                {'value': self.get_indicator_data(name, period)}
 
             # calculate the percentage if required
             if self.options.with_percentage:
                 line_data['values'][pid]['percent'] = \
-                                          self.get_indicator_rate(name, period)
+                    self.get_indicator_rate(name, period)
 
         # calculate total if required
         if self.options.with_total:
             line_data['total'] = \
-                {'value': sum(self.clean_list([l['value'] \
-                                    for l in line_data['values'].values()])),
+                {'value':
+                    sum(self.clean_list([l['value']
+                                         for l in line_data['values'].values()])),
                  'percent': 1}
 
         return line_data
@@ -247,8 +248,8 @@ class IndicatorTable(object):
         # get a list of all methods matching criteria:
         # indicator with correct name. There should be exactly one.
         inspect_lambda = lambda x: ismethod(x) \
-                                and hasattr(x, '_is_indicator') \
-                                and x.__name__ == name
+            and hasattr(x, '_is_indicator') \
+            and x.__name__ == name
         mms = getmembers(self, inspect_lambda)
         try:
             # call the actual function
@@ -270,7 +271,7 @@ class IndicatorTable(object):
         value = self.get_indicator_data(name, period)
 
         # return None if there is no data value
-        if value == None:
+        if value is None:
             return None
 
         try:
@@ -291,6 +292,6 @@ class IndicatorTable(object):
         stref = getattr(self, name)._reference
         if not stref:
             inspect_lambda = lambda x: ismethod(x) \
-                                    and hasattr(x, '_is_reference')
+                and hasattr(x, '_is_reference')
             stref = getmembers(self, inspect_lambda)[0][0]
         return stref

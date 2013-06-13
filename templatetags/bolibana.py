@@ -28,13 +28,13 @@ def phone_number_formatter(number):
             span = 3
         else:
             span = 2
-        return u" ".join([u"".join(number[i:i + span]) \
-                          for i in range(0, len(number), span)])
+        return u" ".join([u"".join(number[i:i + span])
+                           for i in range(0, len(number), span)])
 
     ind, clean_number = clean_phone_number(number)
     if ind:
         return _(u"(%(ind)s) %(num)s") \
-               % {'ind': ind, 'num': format(clean_number)}
+            % {'ind': ind, 'num': format(clean_number)}
     return format(clean_number)
 
 
@@ -100,7 +100,7 @@ def report_yesno_verbose(value):
 def report_value(value):
     try:
         float(value)
-        return number_format(value).replace(u' ', u' ') # non-break thin
+        return number_format(value).replace(u' ', u' ')  # non-break thin
     except:
         return report_yesno_verbose(value)
 
@@ -294,7 +294,7 @@ def dynfilter(obj, params):
     else:
         func = params
 
-    prop =  getattr(obj, func)
+    prop = getattr(obj, func)
 
     if prop:
         try:

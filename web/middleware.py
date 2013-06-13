@@ -4,7 +4,6 @@
 
 from django.template import RequestContext, loader
 from django.conf import settings
-from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseForbidden, HttpResponseNotFound
 from django.views.decorators.csrf import requires_csrf_token
 from django.http import Http404
@@ -12,39 +11,37 @@ from bolibana.web.http import Http403
 
 
 @requires_csrf_token
-def access_forbidden(request, message=None, \
+def access_forbidden(request, message=None,
                      template_name='403.html', *args, **kwargs):
     """ renders 403.html in context to be used by Http403 Exception """
     t = loader.get_template(template_name)
-    return HttpResponseForbidden(t.render(RequestContext(request, \
-                                              {'request_path': request.path, \
-                                               'message': message})))
+    return HttpResponseForbidden(t.render(RequestContext(request,
+                                                         {'request_path': request.path,
+                                                          'message': message})))
 
 
 @requires_csrf_token
-def page_not_found(request, message=None, \
-                     template_name='404.html', *args, **kwargs):
+def page_not_found(request, message=None,
+                   template_name='404.html', *args, **kwargs):
     """ renders 404.html in context to be used by Http404 Exception """
     t = loader.get_template(template_name)
-    return HttpResponseForbidden(t.render(\
-            RequestContext(request, \
-                           {'request_path': request.path, \
-                            'message': message, \
-                            'referrer': request.META.get('HTTP_REFERER', \
-                                                         None)})))
+    return HttpResponseForbidden(t.render(
+        RequestContext(request,
+                       {'request_path': request.path,
+                        'message': message,
+                        'referrer': request.META.get('HTTP_REFERER', None)})))
 
 
 @requires_csrf_token
-def access_error(request, message=None, \
-                     template_name='500.html', *args, **kwargs):
+def access_error(request, message=None,
+                 template_name='500.html', *args, **kwargs):
     """ renders 500.html in context to be used by uncathed Exception """
     t = loader.get_template(template_name)
-    return HttpResponseNotFound(t.render(\
-            RequestContext(request, \
-                           {'request_path': request.path, \
-                            'message': message, \
-                            'referrer': request.META.get('HTTP_REFERER', \
-                                                         None)})))
+    return HttpResponseNotFound(t.render(
+        RequestContext(request,
+                       {'request_path': request.path,
+                        'message': message,
+                        'referrer': request.META.get('HTTP_REFERER', None)})))
 
 
 class Http403Middleware(object):
@@ -71,7 +68,7 @@ class Http500Middleware(object):
         # /!\ middlewares are processed bottom-up.
         if isinstance(exception, Exception):
             # if debug mode, just forwards it to django
-            if settings.DEBUG == True:
+            if settings.DEBUG is True:
                 raise exception
             # if not, display access_error and load it with exception details
             message = u"%s: %s" % (exception.__class__.__name__,
@@ -80,7 +77,7 @@ class Http500Middleware(object):
 
     def process_response(self, request, response):
         # catch non-exception HTTP 500 responses.
-        if response.status_code == 500 and settings.DEBUG == False:
+        if response.status_code == 500 and settings.DEBUG is False:
             # we are filling error message with whatever the response is.
             # this could be terrible if content is a webpage although not
             # that likely to happen.

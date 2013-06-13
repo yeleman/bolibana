@@ -23,7 +23,7 @@ class ErrorManager(object):
         """ Add an error message to the specified category or default
 
             Categories are automatically created if missing """
-        if section == None:
+        if section is None:
             section = 'default'
         # create section if it doesn't exist
         if not section in self.data:

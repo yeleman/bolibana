@@ -148,9 +148,9 @@ def cache_result(ident=None, store='default'):
             # also skip caching if:
             #   - there's no identifier
             #   - caching is not available/configured
-            if ((not use_cache and not feed_cache)
-                or not ident
-                or isinstance(cache_store, CacheNotAvailable)):
+            if (not use_cache and not feed_cache) \
+               or not ident \
+               or isinstance(cache_store, CacheNotAvailable):
 
                 return target_method(*args, **kwargs)
 

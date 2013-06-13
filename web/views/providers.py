@@ -54,11 +54,11 @@ class EditProviderForm(forms.Form):
                                    label=ugettext_lazy(u"Phone Number"))
 
     phone_number_extra = forms.CharField(max_length=12, required=False,
-                                   label=ugettext_lazy(u"Phone Number"))
+                                         label=ugettext_lazy(u"Phone Number"))
 
     role = forms.ChoiceField(label=ugettext_lazy(u"Role"),
-                             choices=[(role.slug, role.name) \
-                                      for role \
+                             choices=[(role.slug, role.name)
+                                      for role
                                       in Role.objects.all().order_by('name')])
 
     entity = TreeNodeChoiceField(queryset=Entity.tree.all(),
@@ -66,7 +66,7 @@ class EditProviderForm(forms.Form):
                                  label=ugettext_lazy(u"Entity"))
 
     def clean_phone_number(self):
-        ind, clean_num = clean_phone_number(self.cleaned_data\
+        ind, clean_num = clean_phone_number(self.cleaned_data
                                                 .get('phone_number'))
         if not ind:
             ind = '223'
@@ -76,15 +76,15 @@ class EditProviderForm(forms.Form):
         if phone_number \
            and Provider.objects.filter(phone_number=phone_number)\
                                .exclude(id=user_id).count() > 0:
-            raise forms.ValidationError(_(u"Phone number already " \
-                                          u"taken by %(provider)s") \
-                                        % {'provider': Provider.objects\
-                                               .get(phone_number=phone_number)\
-                                               .name_access()})
+            raise forms.ValidationError(_(u"Phone number already "
+                                          u"taken by %(provider)s")
+                                        % {'provider': Provider.objects
+                                            .get(phone_number=phone_number)
+                                            .name_access()})
         return phone_number
 
     def clean_phone_number_extra(self):
-        ind, clean_num = clean_phone_number(self.cleaned_data\
+        ind, clean_num = clean_phone_number(self.cleaned_data
                                                 .get('phone_number_extra'))
         if not ind:
             ind = '223'
@@ -109,7 +109,7 @@ class EditProviderForm(forms.Form):
                 level = self.cleaned_data.get('role')
 
             if self.cleaned_data.get('entity').type.slug != level:
-                raise forms.ValidationError(_(u"Entity is not valid " \
+                raise forms.ValidationError(_(u"Entity is not valid "
                                               u"for this Role."))
         return self.cleaned_data.get('entity')
 
@@ -135,15 +135,14 @@ def add_edit_user(request, user_id=None, template='add_edit_provider.html'):
             if user_id:
                 provider = Provider.objects.get(id=user_id)
                 # remove all access and add new one
-                while provider.access.count() > 0 \
-                      and access != provider.access.all()[0]:
+                while provider.access.count() > 0 and access != provider.access.all()[0]:
                     provider.access.remove(provider.access.all()[0])
                 provider.access.add(access)
             else:
                 # forge username
-                username = username_from_name(\
-                                         form.cleaned_data.get('first_name'),
-                                         form.cleaned_data.get('last_name'))
+                username = username_from_name(
+                    form.cleaned_data.get('first_name'),
+                    form.cleaned_data.get('last_name'))
 
                 print username
                 # generate password
@@ -164,41 +163,41 @@ def add_edit_user(request, user_id=None, template='add_edit_provider.html'):
                                    .exclude(id=user_id).count() == 0:
                 provider.phone_number = phone_number
             provider.phone_number_extra = \
-                                    form.cleaned_data.get('phone_number_extra')
+                form.cleaned_data.get('phone_number_extra')
             provider.save()
             messages.success(request, _(u"Profile details updated."))
 
             if not user_id and provider.email:
                 # send email with password on account creation
                 sent, sent_message = send_email(recipients=provider.email,
-                                            context={'provider': provider,
-                                                     'creator': web_provider,
-                                                     'password': password,
-                                                     'url': full_url()},
-                                           template='emails/new_account.txt',
-                                 title_template='emails/title.new_account.txt')
+                                                context={'provider': provider,
+                                                         'creator': web_provider,
+                                                         'password': password,
+                                                         'url': full_url()},
+                                                template='emails/new_account.txt',
+                                                title_template='emails/title.new_account.txt')
                 if sent:
-                    messages.success(request, _(u"An e-mail containing the " \
-                                                "password has been sent " \
-                                                "to %(email)s") \
-                                              % {'email': provider.email})
+                    messages.success(request, _(u"An e-mail containing the "
+                                                "password has been sent "
+                                                "to %(email)s")
+                                     % {'email': provider.email})
                 else:
-                    messages.error(request, _(u"Unable to send e-mail " \
-                                              "to %(email)s. Please record " \
-                                              "and forward the password: " \
-                                              "%(pass)s") \
-                                            % {'email': provider.email,
-                                               'pass': password})
+                    messages.error(request, _(u"Unable to send e-mail "
+                                              "to %(email)s. Please record "
+                                              "and forward the password: "
+                                              "%(pass)s")
+                                   % {'email': provider.email,
+                                      'pass': password})
                     # log exception
-                    logger.warning(u"Unable to send email to %(email)s " \
-                                   "with Exception %(e)r" \
+                    logger.warning(u"Unable to send email to %(email)s "
+                                   "with Exception %(e)r"
                                    % {'email': provider.email,
                                       'e': sent_message})
             # display password if user has no email address
             elif not user_id and not provider.email:
-                messages.info(request, _(u"Please record and forward the " \
-                                         "generated password: %(pass)s") \
-                                       % {'pass': password})
+                messages.info(request, _(u"Please record and forward the "
+                                         "generated password: %(pass)s")
+                              % {'pass': password})
 
             return redirect(add_edit_user, provider.id)
         else:
@@ -246,21 +245,21 @@ def enable_disable_user(request, user_id, activate):
     try:
         provider = Provider.objects.get(id=user_id)
     except Provider.DoesNotExist:
-        raise Http404(_(u"There is no Provider account with ID #%(id)d") \
+        raise Http404(_(u"There is no Provider account with ID #%(id)d")
                       % {'id': int(user_id)})
 
     if provider.is_active == activate:
-        messages.warning(request, _(u"Requested status is same " \
+        messages.warning(request, _(u"Requested status is same "
                                     "as current user status."))
     else:
         provider.is_active = activate
         provider.save()
-        messages.warning(request, _(u"%(provider)s status has been " \
-                                    "changed to %(status)s") \
-                                  % {'provider': provider.name(),
-                                     'status': _(u"active") \
-                                               if provider.is_active \
-                                               else _(u"inactive")})
+        messages.warning(request, _(u"%(provider)s status has been "
+                                    "changed to %(status)s")
+                         % {'provider': provider.name(),
+                            'status': _(u"active")
+                            if provider.is_active
+                            else _(u"inactive")})
     return redirect('edit_user', provider.id)
 
 
@@ -272,7 +271,7 @@ def password_user(request, user_id, pwd_id):
     try:
         provider = Provider.objects.get(id=user_id)
     except Provider.DoesNotExist:
-        raise Http404(_(u"There is no Provider account with ID #%(id)d") \
+        raise Http404(_(u"There is no Provider account with ID #%(id)d")
                       % {'id': int(user_id)})
 
     # generate and assign password
@@ -286,33 +285,33 @@ def password_user(request, user_id, pwd_id):
     if provider.email:
         # send email with password on account creation
         sent, sent_message = send_email(recipients=provider.email,
-                                    context={'provider': provider,
-                                             'creator': web_provider,
-                                             'password': password,
-                                             'url': full_url()},
-                                   template='emails/new_password.txt',
-                         title_template='emails/title.new_password.txt')
+                                        context={'provider': provider,
+                                                 'creator': web_provider,
+                                                 'password': password,
+                                                 'url': full_url()},
+                                        template='emails/new_password.txt',
+                                        title_template='emails/title.new_password.txt')
         if sent:
-            messages.success(request, _(u"An e-mail containing the " \
-                                        "password has been sent " \
-                                        "to %(email)s") \
-                                      % {'email': provider.email})
+            messages.success(request, _(u"An e-mail containing the "
+                                        "password has been sent "
+                                        "to %(email)s")
+                             % {'email': provider.email})
         else:
-            messages.error(request, _(u"Unable to send e-mail " \
-                                      "to %(email)s. Please record " \
-                                      "and forward the password: " \
-                                      "%(pass)s") \
-                                    % {'email': provider.email,
-                                       'pass': password})
+            messages.error(request, _(u"Unable to send e-mail "
+                                      "to %(email)s. Please record "
+                                      "and forward the password: "
+                                      "%(pass)s")
+                           % {'email': provider.email,
+                              'pass': password})
             # log exception
-            logger.warning(u"Unable to send email to %(email)s " \
-                           "with Exception %(e)r" \
+            logger.warning(u"Unable to send email to %(email)s "
+                           "with Exception %(e)r"
                            % {'email': provider.email,
                               'e': sent_message})
     # display password if user has no email address
     else:
-        messages.info(request, _(u"Please record and forward the " \
-                                 "generated password: %(pass)s") \
-                               % {'pass': password})
+        messages.info(request, _(u"Please record and forward the "
+                                 "generated password: %(pass)s")
+                      % {'pass': password})
 
     return redirect('edit_user', provider.id)

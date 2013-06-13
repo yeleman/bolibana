@@ -2,15 +2,13 @@
 # encoding=utf-8
 # maintainer: rgaudin
 
-import os
 import re
 import logging
 
 import xlrd
 from django.utils.translation import ugettext as _
 
-from bolibana.reporting.errors import (ErrorManager, MissingData,
-                                       IncorrectReportData)
+from bolibana.reporting.errors import (ErrorManager, MissingData)
 
 logger = logging.getLogger(__name__)
 
@@ -129,9 +127,9 @@ class ExcelForm(object):
             else:
                 self.ws = book.sheets()[0]
         except Exception as e:
-            logger.warning(u"Unable to read Excel Uploaded file %(path)s. " \
+            logger.warning(u"Unable to read Excel Uploaded file %(path)s. "
                            "Raised %(e)r" % {'path': self.filepath, 'e': e})
-            self.errors.add(u"Impossible d'ouvrir le masque de saisie. " \
+            self.errors.add(u"Impossible d'ouvrir le masque de saisie. "
                             u"Le fichier est corrompu ou a été modifié.")
             return
 
@@ -141,7 +139,7 @@ class ExcelForm(object):
     def mapping(self):
         """ dict mapping of the current version """
         if self.version:
-            return self._mapping[version]
+            return self._mapping[self.version]
         else:
             return self._mapping[self._mapping.keys()[0]]
 
@@ -185,7 +183,7 @@ class ExcelForm(object):
 
     def value_error(self, data, field, variable, exception):
         """ adds an error if data is not valid """
-        self.errors.add(_("%(data)s is not a valid data for %(field)s") \
+        self.errors.add(_("%(data)s is not a valid data for %(field)s")
                         % {'data': data, 'field': field.display_name()})
 
     def is_valid(self, *args, **kwargs):

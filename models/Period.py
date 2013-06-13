@@ -54,7 +54,7 @@ class YearManager(models.Manager):
 class CustomManager(models.Manager):
     def get_query_set(self):
         return super(CustomManager, self).get_query_set() \
-                                        .filter(period_type=Period.CUSTOM)
+                                         .filter(period_type=Period.CUSTOM)
 
 
 class Period(models.Model):
@@ -232,12 +232,12 @@ class Period(models.Model):
 
     def next(self):
         ''' returns next period in time '''
-        return self.find_create_by_date(self.middle() \
+        return self.find_create_by_date(self.middle()
                                         + timedelta(self.delta()))
 
     def previous(self):
         ''' returns next period in time '''
-        return self.find_create_by_date(self.middle() \
+        return self.find_create_by_date(self.middle()
                                         - timedelta(self.delta()))
 
     @classmethod
@@ -305,15 +305,15 @@ class Period(models.Model):
         if not isinstance(date_obj, datetime):
             date_obj = datetime.fromtimestamp(float(date_obj.strftime('%s')))
             date_obj = datetime(date_obj.year, date_obj.month,
-                                         date_obj.day, date_obj.hour,
-                                         date_obj.minute, 1,
+                                date_obj.day, date_obj.hour,
+                                date_obj.minute, 1,
                                 tzinfo=timezone.utc)
 
         date_obj = normalize_date(date_obj, as_aware=True)
         try:
-            period = [period for period in cls.objects.all() \
-                                        if period.start_on <= date_obj \
-                                        and period.end_on >= date_obj][0]
+            period = [period for period in cls.objects.all()
+                      if period.start_on <= date_obj
+                      and period.end_on >= date_obj][0]
         except IndexError:
 
             period = cls.find_create_with(*cls.boundaries(date_obj))
@@ -366,7 +366,7 @@ class Period(models.Model):
         if weeknum == 0:
             start_week = sy
             end_week = start_week + timedelta(ONE_WEEK - sy_dow) \
-                                  - timedelta(ONE_SECOND)
+                - timedelta(ONE_SECOND)
         else:
             weeknum -= 1  # cause we've set start as first real week
             start_week = sy + timedelta(ONE_WEEK * weeknum)
@@ -510,7 +510,7 @@ class MonthPeriod(Period):
         start = date_obj.replace(day=1, hour=0, minute=0,
                                  second=0, microsecond=0)
         end = start.replace(year=nyear, month=nmonth) \
-              - timedelta(ONE_MICROSECOND)
+            - timedelta(ONE_MICROSECOND)
         return (start, end)
 
     def strid(self):
@@ -617,7 +617,7 @@ class QuarterPeriod(Period):
 
     def strid(self):
         return 'Q%s-%s' % (str(self.quarter).zfill(2),
-                          self.middle().strftime('%Y'))
+                           self.middle().strftime('%Y'))
 
 
 class YearPeriod(Period):

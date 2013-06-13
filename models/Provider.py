@@ -14,7 +14,7 @@ class ActiveManager(models.Manager):
 
     def get_query_set(self):
         return super(ActiveManager, self).get_query_set() \
-                        .filter(user__is_active=True)
+                                         .filter(user__is_active=True)
 
 
 class Provider(models.Model):
@@ -35,13 +35,13 @@ class Provider(models.Model):
                                     null=True, blank=True,
                                     verbose_name=_(u"Phone Number"))
     phone_number_extra = models.CharField(max_length=12,
-                                    null=True, blank=True,
-                                    verbose_name=_(u"Phone Number"))
+                                          null=True, blank=True,
+                                          verbose_name=_(u"Phone Number"))
     access = models.ManyToManyField('Access', null=True, blank=True,
                                     verbose_name=_(u"Access"))
     pwhash = models.CharField(max_length=255,
-                                    null=True, blank=True,
-                                    verbose_name=_(u"Password Hash"))
+                              null=True, blank=True,
+                              verbose_name=_(u"Password Hash"))
 
     # django manager first
     objects = models.Manager()
@@ -67,8 +67,8 @@ class Provider(models.Model):
         access = self.first_access()
         if access:
             return ugettext(u"%(name)s (%(access)s)") \
-                   % {'name': self.name(),
-                      'access': access.name()}
+                % {'name': self.name(),
+                   'access': access.name()}
         else:
             return self.name()
 
@@ -97,7 +97,7 @@ class Provider(models.Model):
     def has_permission(self, perm_slug, entity=None):
         """ whether or not User has this permission for Enitity """
         qs = self.access.all()
-        if entity != None:
+        if entity is not None:
             qs = qs.filter(target=entity)
         for access in qs:
             if perm_slug in [p.slug for p in access.role.permissions.all()]:

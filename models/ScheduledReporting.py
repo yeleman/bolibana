@@ -46,17 +46,17 @@ class ScheduledReporting(models.Model):
     @property
     def casted_start(self):
         try:
-            return self.report_class.period_class.find_create_with(
-                                                start_on=self.start.start_on,
-                                                end_on=self.start.end_on)
+            return self.report_class.period_class \
+                .find_create_with(start_on=self.start.start_on,
+                                  end_on=self.start.end_on)
         except:
             return None
 
     @property
     def casted_end(self):
         try:
-            return self.report_class.period_class.find_create_with(
-                                                start_on=self.end.start_on,
-                                                end_on=self.end.end_on)
+            return self.report_class.period_class \
+                .find_create_with(start_on=self.end.start_on,
+                                  end_on=self.end.end_on)
         except:
             return None
