@@ -103,10 +103,27 @@ class Report(models.Model):
                 (STATUS_MODIFIED_AUTHOR, u"Modified by author"),
                 (STATUS_MODIFIED_VALIDATOR, u"Modified by validator"),
                 (STATUS_AUTO_VALIDATED, u"Auto-validated"))
+    STATUSES_STR = {
+        STATUS_UNSAVED: 'STATUS_UNSAVED',
+        STATUS_CREATED: 'STATUS_CREATED',
+        STATUS_INCOMPLETE: 'STATUS_INCOMPLETE',
+        STATUS_ERRONEOUS: 'STATUS_ERRONEOUS',
+        STATUS_COMPLETE: 'STATUS_COMPLETE',
+        STATUS_VALIDATED: 'STATUS_VALIDATED',
+        STATUS_CLOSED: 'STATUS_CLOSED',
+        STATUS_MODIFIED_AUTHOR: 'STATUS_MODIFIED_AUTHOR',
+        STATUS_MODIFIED_VALIDATOR: 'STATUS_MODIFIED_VALIDATOR',
+        STATUS_AUTO_VALIDATED: 'STATUS_AUTO_VALIDATED',
+    }
 
     TYPE_SOURCE = 0
     TYPE_AGGREGATED = 1
     TYPES = ((TYPE_SOURCE, _(u"Source")), (TYPE_AGGREGATED, _(u"Aggregated")))
+
+    TYPES_STR = {
+        TYPE_SOURCE: 'TYPE_SOURCE',
+        TYPE_AGGREGATED: 'TYPE_AGGREGATED'
+    }
 
     class Meta:
         app_label = 'bolibana'
