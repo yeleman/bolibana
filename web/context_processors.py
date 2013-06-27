@@ -10,7 +10,7 @@ from bolibana.tools.utils import get_level_for, random_proverb
 def add_provider(request):
     """ Add the provider object of logged-in user or None """
     try:
-        web_provider = request.user.get_profile()
+        web_provider = request.user
     except:
         web_provider = None
 
@@ -21,7 +21,7 @@ def add_provider(request):
 def add_level(request):
     """ Add level (hierachy slug) of logged-in provider or None """
     try:
-        level = get_level_for(request.user.get_profile())
+        level = get_level_for(request.user)
     except:
         level = None
     return {'level': level}

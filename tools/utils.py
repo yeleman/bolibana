@@ -186,23 +186,22 @@ def clean_phone_number(number):
 
 def get_autobot():
     from bolibana.models import Provider
-    return Provider.objects.get(user__username='autobot')
+    return Provider.objects.get(username='autobot')
 
 
 def provider_can(permission, provider, entity=None):
     """ bolean if(not) provider has permission on entity or descendants """
 
-    for access in provider.access.all():
-        if access.role.permissions.filter(slug=permission).count() > 0:
-            # provider as access. Not entity was queried.
-            if entity is None:
-                return True
+    if provider.access.role.permissions.filter(slug=permission).count() > 0:
+        # provider as access. Not entity was queried.
+        if entity is None:
+            return True
 
-            # if entity was queried, we need to find out if entity is
-            # within the descendants of provider's one.
-            if entity == access.target \
-               or entity in access.target.get_descendants():
-                return True
+        # if entity was queried, we need to find out if entity is
+        # within the descendants of provider's one.
+        if entity == provider.access.target \
+           or entity in provider.access.target.get_descendants():
+            return True
     return False
 
 
@@ -246,7 +245,7 @@ def get_level_for(provider):
     # finds best access
     # based on number of descendants
     # in the entities hierarchy
-    best_access = provider.first_access() or \
+    best_access = provider.access() or \
         Access.objects.get(role=Role.objects.get(slug='guest'),
                            object_id=1,
                            content_type=ContentType.objects.get(app_label='bolibana_reporting',

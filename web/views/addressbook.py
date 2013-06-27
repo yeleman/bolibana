@@ -45,13 +45,13 @@ def addressbook(request, template='addressbook.html'):
 
         if request.POST.get('role'):
             providers = providers.filter(access__role__slug=request
-                                 .POST.get('role'), user__is_active=True)
+                                 .POST.get('role'), is_active=True)
 
         if request.POST.get('entity'):
             entity = Entity.objects.get(id=request.POST.get('entity'))
             providers = providers.filter(access__object_id__in=[entity.id]
                                          + [e.id for e in entity.get_descendants()],
-                                         user__is_active=True)
+                                         is_active=True)
 
         context.update({'contacts': providers})
     else:
@@ -67,7 +67,7 @@ def addressbook(request, template='addressbook.html'):
 def adressbook_send_sms(request):
     if request.method == "POST":
         form_msg = MessageForm(request.POST)
-        providers = Provider.objects.filter(user__is_active=True)
+        providers = Provider.objects.filter(is_active=True)
 
         role_slug = request.POST.get('role', None)
         try:
@@ -77,13 +77,13 @@ def adressbook_send_sms(request):
 
         if role_slug:
             providers = providers.filter(access__role__slug=request
-                                 .POST.get('role'), user__is_active=True)
+                                 .POST.get('role'), is_active=True)
 
         if entity_id:
             entity = Entity.objects.get(id=entity_id)
             providers = providers.filter(access__object_id__in=[entity.id]
                                          + [e.id for e in entity.get_descendants()],
-                                         user__is_active=True)
+                                         is_active=True)
 
         is_everything = not role_slug and entity_id == 1
 

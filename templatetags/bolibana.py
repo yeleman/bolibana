@@ -8,7 +8,7 @@ from django import template
 from django.template.defaultfilters import stringfilter
 from django.utils.translation import ugettext as _
 from django.core.urlresolvers import reverse
-from babeldjango.templatetags.babel import datefmt
+from django.utils.dateformat import format as date_format
 
 from ..models import Report
 from ..tools.utils import clean_phone_number
@@ -277,12 +277,12 @@ def graph_date_fmt(date_obj, periods=1):
     if not isinstance(periods, int):
         periods = len(periods)
     if periods >= 8:
-        fmt = "MM/YY"
+        fmt = "b/y"
     elif periods >= 5:
-        fmt = "MMM YYYY"
+        fmt = "b Y"
     else:
-        fmt = "MMMM YYYY"
-    return datefmt(date_obj, fmt)
+        fmt = "F Y"
+    return date_format(date_obj, fmt)
 
 
 @register.filter(name='dynfilter')

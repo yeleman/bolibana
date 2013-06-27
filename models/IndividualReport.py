@@ -1,14 +1,20 @@
 #!/usr/bin/env python
-# encoding=utf-8
-# maintainer: rgaudin
+# -*- coding: utf-8 -*-
+# vim: ai ts=4 sts=4 et sw=4 nu
 
-from django.db import models
+from __future__ import (unicode_literals, absolute_import,
+                        division, print_function)
+
 from django.utils.translation import ugettext_lazy as _, ugettext
 
+from bolibana.models.BaseReport import BaseReport
 
-class IndividualReport(models.Model):
 
-    """ Applies to an unique target whose not going to be tracked. """
+class IndividualReport(BaseReport):
+
+    """ Applies to an unique target whose not going to be tracked.
+
+        """
 
     class Meta:
         app_label = 'bolibana'
@@ -16,22 +22,7 @@ class IndividualReport(models.Model):
         verbose_name_plural = _(u"Individual Reports")
         abstract = True
 
-    created_by = models.ForeignKey('Provider',
-                                   related_name='%(app_label)s_' \
-                                                '%(class)s_reports',
-                                   verbose_name=_(u"Created By"))
-    created_on = models.DateTimeField(auto_now_add=True,
-                                      verbose_name=_(u"Created On"))
-    modified_by = models.ForeignKey('Provider',
-                                    null=True, blank=True,
-                                    verbose_name=_(u"Modified By"))
-    modified_on = models.DateTimeField(auto_now=True,
-                                       verbose_name=_(u"Modified On"))
-
-    # django manager first
-    objects = models.Manager()
-
     def __unicode__(self):
         return ugettext(u"IDVR%(id)d - %(date)s") \
-                        % {'id': self.id,
-                           'date': self.created_on.strftime('%d.%m.%Y')}
+            % {'id': self.id,
+               'date': self.created_on.strftime('%d.%m.%Y')}

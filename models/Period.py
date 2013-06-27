@@ -7,6 +7,7 @@ from datetime import datetime, date, timedelta
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.dateformat import format as date_format
 
 from bolibana.tools.utils import normalize_date
 from bolibana.reporting.utils import next_month
@@ -221,8 +222,8 @@ class Period(models.Model):
             cls = eval(u"%sPeriod" % self.period_type.title())
             return cls.objects.get(id=self.id).name()
         except:
-            # TRANSLATORS: Python date format for Generic .name()
-            return self.middle().strftime(ugettext('%c'))
+            # TRANSLATORS: Django date format for Generic .name()
+            return date_format(self.middle(), ugettext("c")).decode('utf-8')
 
     def strid(self):
         return self.middle().strftime('%s')
@@ -401,12 +402,12 @@ class DayPeriod(Period):
         return cls.DAY
 
     def name(self):
-        # Translators: Python's date format for DayPeriod.name()
-        return self.middle().strftime(ugettext(u"%x")).decode('utf-8')
+        # Translators: Django's date format for DayPeriod.name()
+        return date_format(self.middle(), ugettext("g/d/y")).decode('utf-8')
 
     def full_name(self):
-        # Translators: Python's date format for DayPeriod.full_name()
-        return self.middle().strftime(ugettext(u"%Y %B %d")).decode('utf-8')
+        # Translators: Django's date format for DayPeriod.full_name()
+        return date_format(self.middle(), ugettext("F d Y")).decode('utf-8')
 
     @classmethod
     def delta(self):
@@ -444,15 +445,15 @@ class WeekPeriod(Period):
         return u'W%s' % self.middle().strftime('%W-%Y')
 
     def name(self):
-        # Translators: Python's date format for WeekPeriod.name()
-        return self.middle().strftime(ugettext(u"%W/%Y")).decode('utf-8')
+        # Translators: Django's date format for WeekPeriod.name()
+        return date_format(self.middle(), ugettext("W/Y")).decode('utf-8')
 
     def full_name(self):
         # Translators: Week Full name representation: weeknum, start and end
-        return (u"Week %(weeknum)s (%(start)s to %(end)s)"
-                % {'weeknum': self.middle().strftime(ugettext(u"%W")).decode('utf-8'),
-                   'start': self.start_on.strftime(ugettext(u"%d %b")).decode('utf-8'),
-                   'end': self.end_on.strftime(ugettext(u"%d %b %Y")).decode('utf-8')})
+        return (ugettext(u"Week %(weeknum)s (%(start)s to %(end)s)")
+                % {'weeknum': date_format(self.middle(), ugettext("W")).decode('utf-8'),
+                   'start': date_format(self.start_on, ugettext("d")).decode('utf-8'),
+                   'end': date_format(self.end_on, ugettext("d F Y")).decode('utf-8')})
 
     @classmethod
     def delta(self):
@@ -490,12 +491,12 @@ class MonthPeriod(Period):
         return self.middle().strftime('%m%Y')
 
     def name(self):
-        # Translators: Python's date format for MonthPeriod.name()
-        return self.middle().strftime(ugettext(u"%m %Y")).decode('utf-8')
+        # Translators: Django's date template format for MonthPeriod.name()
+        return date_format(self.middle(), ugettext("F Y")).decode('utf-8')
 
     def full_name(self):
-        # Translators: Python's date format for MonthPeriod.full_name()
-        return self.middle().strftime(ugettext(u"%B %Y")).decode('utf-8')
+        # Translators: Django's date template format for MonthPeriod.full_name()
+        return date_format(self.middle(), ugettext("F Y")).decode('utf-8')
 
     @classmethod
     def delta(self):
@@ -548,9 +549,11 @@ class QuarterPeriod(Period):
         return 'Q%d.%s' % (self.quarter, self.middle().strftime('%Y'))
 
     def name(self):
-        # Translators: Python's date format for QuarterPeriod.name()
+        # Translators: django date format for accompagning Quarter in Quarter.name()
+        drepr = date_format(self.middle(), ugettext("Y")).decode('utf-8')
+        # Translators: Quarter.name() repr using Quarter number and other
         return (ugettext(u"Q%(quarter)s.%(year)s")
-                % {'year': self.middle().strftime(ugettext(u"%Y")).decode('utf-8'),
+                % {'year': drepr,
                    'quarter': self.quarter})
 
     def full_name(self):
@@ -579,12 +582,12 @@ class QuarterPeriod(Period):
 
             return ordval
 
-        # Translators: Python's date format for QuarterPeriod.full_name()
+        # Translators: Django's date format for QuarterPeriod.full_name()
         return (u"%(ordinal_quarter)s Quarter %(year)s (%(start)s to %(end)s)"
                 % {'ordinal_quarter': ordinal(self.quarter),
-                   'year': self.middle().strftime(ugettext(u"%Y")).decode('utf-8'),
-                   'start': self.start_on.strftime(ugettext(u"%B")).decode('utf-8'),
-                   'end': self.end_on.strftime(ugettext(u"%B %Y")).decode('utf-8')})
+                   'year': date_format(self.middle(), ugettext("Y")).decode('utf-8'),
+                   'start': date_format(self.start_on, ugettext("F")).decode('utf-8'),
+                   'end': date_format(self.end_on, ugettext("F Y")).decode('utf-8')})
 
     @classmethod
     def delta(self):
@@ -635,8 +638,8 @@ class YearPeriod(Period):
         return cls.YEAR
 
     def name(self):
-        # Translators: Python's date format for YearPeriod.name()
-        return self.middle().strftime(ugettext(u"%Y")).decode('utf-8')
+        # Translators: Django's date format for YearPeriod.name()
+        return date_format(self.middle(), ugettext("F")).decode('utf-8')
 
     def full_name(self):
         return self.name()

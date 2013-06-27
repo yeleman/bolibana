@@ -14,11 +14,11 @@ def provider_required(target):
     """ Web view decorator ensuring visitor is a logged-in Provider """
     def wrapper(request, *args, **kwargs):
         try:
-            web_provider = request.user.get_profile()
+            web_provider = request.user
         except:
             # either not logged-in or non-provider user
             web_provider = None
-        if web_provider:
+        if not web_provider.is_anonymous() and web_provider.is_active:
             # user is a provider, forward to view
             return target(request, *args, **kwargs)
         else:
@@ -39,8 +39,10 @@ def provider_permission(permission, entity=None):
     def decorator(target):
         def wrapper(request, *args, **kwargs):
             try:
-                web_provider = request.user.get_profile()
+                web_provider = request.user
                 assert(web_provider)
+                assert(web_provider.is_active)
+                assert(not web_provider.is_anonymous())
             except:
                 # user is not a provider. could be logged-in though.
                 # forwards to provider_required

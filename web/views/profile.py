@@ -46,7 +46,7 @@ class ProviderPasswordForm(forms.Form):
 @provider_required
 def edit_profile(request, template='edit_profile.html'):
     context = {}
-    provider = request.user.get_profile()
+    provider = request.user
 
     is_password = 'password1' in request.POST
 

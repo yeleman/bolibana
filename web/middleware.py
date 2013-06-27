@@ -1,6 +1,10 @@
 #!/usr/bin/env python
-# encoding=utf-8
-# maintainer: rgaudin
+# -*- coding: utf-8 -*-
+# vim: ai ts=4 sts=4 et sw=4 nu
+
+from __future__ import (unicode_literals, absolute_import,
+                        division, print_function)
+import logging
 
 from django.template import RequestContext, loader
 from django.conf import settings
@@ -68,8 +72,9 @@ class Http500Middleware(object):
         # /!\ middlewares are processed bottom-up.
         if isinstance(exception, Exception):
             # if debug mode, just forwards it to django
-            if settings.DEBUG is True:
-                raise exception
+            # if settings.DEBUG is True:
+            #     pass
+            logging.exception("500 Error raised.")
             # if not, display access_error and load it with exception details
             message = u"%s: %s" % (exception.__class__.__name__,
                                    str(exception))

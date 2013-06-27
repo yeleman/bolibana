@@ -29,7 +29,7 @@ class ProvidersListView(ListView):
     template_name = 'users_list.html'
 
     def get_queryset(self):
-        return Provider.objects.order_by('user__first_name', 'user__last_name')
+        return Provider.objects.order_by('first_name', 'last_name')
 
     def get_context_data(self, **kwargs):
         context = super(ProvidersListView, self).get_context_data(**kwargs)
@@ -117,7 +117,7 @@ class EditProviderForm(forms.Form):
 @provider_permission('can_manage_users')
 def add_edit_user(request, user_id=None, template='add_edit_provider.html'):
     context = {'category': 'admin', 'location': 'users'}
-    web_provider = request.user.get_profile()
+    web_provider = request.user
 
     if request.method == 'POST':
 
@@ -134,10 +134,7 @@ def add_edit_user(request, user_id=None, template='add_edit_provider.html'):
 
             if user_id:
                 provider = Provider.objects.get(id=user_id)
-                # remove all access and add new one
-                while provider.access.count() > 0 and access != provider.access.all()[0]:
-                    provider.access.remove(provider.access.all()[0])
-                provider.access.add(access)
+                provider.access = access
             else:
                 # forge username
                 username = username_from_name(
@@ -209,8 +206,8 @@ def add_edit_user(request, user_id=None, template='add_edit_provider.html'):
                 pass
                 #raise Http404
             try:
-                provider_data.update({'entity': provider.first_target().id,
-                                      'role': provider.first_role().slug})
+                provider_data.update({'entity': provider.target().id,
+                                      'role': provider.role().slug})
             except:
                 pass
     # GET METHOD
@@ -223,8 +220,8 @@ def add_edit_user(request, user_id=None, template='add_edit_provider.html'):
             except Provider.DoesNotExist:
                 raise Http404
             try:
-                provider_data.update({'entity': provider.first_target().id,
-                                      'role': provider.first_role().slug,
+                provider_data.update({'entity': provider.target().id,
+                                      'role': provider.role().slug,
                                       'uid': provider.id})
             except:
                 pass
@@ -266,7 +263,7 @@ def enable_disable_user(request, user_id, activate):
 @provider_permission('can_manage_users')
 def password_user(request, user_id, pwd_id):
     """ Generate new password for user """
-    web_provider = request.user.get_profile()
+    web_provider = request.user
 
     try:
         provider = Provider.objects.get(id=user_id)
