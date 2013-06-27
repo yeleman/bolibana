@@ -1,7 +1,9 @@
 #!/usr/bin/env python
-# encoding=utf-8
-# maintainer: rgaudin
+# -*- coding: utf-8 -*-
+# vim: ai ts=4 sts=4 et sw=4 nu
 
+from __future__ import (unicode_literals, absolute_import,
+                        division, print_function)
 import logging
 
 from django import forms
@@ -12,10 +14,12 @@ from django.utils.translation import ugettext as _, ugettext_lazy
 from django.views.generic import ListView
 from mptt.fields import TreeNodeChoiceField
 
-from bolibana.models import Role, Provider, Access
+from bolibana.models.Role import Role
+from bolibana.models.Provider import Provider
+from bolibana.models.Access import Access
+from bolibana.models.Entity import Entity
 from bolibana.auth.utils import (username_from_name, random_password,
                                  random_sample_password)
-from bolibana.models import Entity
 from bolibana.tools.utils import send_email, full_url, clean_phone_number
 from bolibana.web.decorators import provider_permission
 
@@ -43,27 +47,27 @@ class EditProviderForm(forms.Form):
 
     uid = forms.IntegerField(required=False,
                              widget=forms.widgets.HiddenInput(),
-                             label=ugettext_lazy(u"User ID"))
+                             label=ugettext_lazy("User ID"))
     first_name = forms.CharField(max_length=50, required=True,
-                                 label=ugettext_lazy(u"First Name"))
+                                 label=ugettext_lazy("First Name"))
     last_name = forms.CharField(max_length=50, required=True,
-                                label=ugettext_lazy(u"Last Name"))
+                                label=ugettext_lazy("Last Name"))
     email = forms.EmailField(required=False,
-                             label=ugettext_lazy(u"E-mail Address"))
+                             label=ugettext_lazy("E-mail Address"))
     phone_number = forms.CharField(max_length=12, required=False,
-                                   label=ugettext_lazy(u"Phone Number"))
+                                   label=ugettext_lazy("Phone Number"))
 
     phone_number_extra = forms.CharField(max_length=12, required=False,
-                                         label=ugettext_lazy(u"Phone Number"))
+                                         label=ugettext_lazy("Phone Number"))
 
-    role = forms.ChoiceField(label=ugettext_lazy(u"Role"),
+    role = forms.ChoiceField(label=ugettext_lazy("Role"),
                              choices=[(role.slug, role.name)
                                       for role
                                       in Role.objects.all().order_by('name')])
 
     entity = TreeNodeChoiceField(queryset=Entity.tree.all(),
-                                 level_indicator=u'---',
-                                 label=ugettext_lazy(u"Entity"))
+                                 level_indicator='---',
+                                 label=ugettext_lazy("Entity"))
 
     def clean_phone_number(self):
         ind, clean_num = clean_phone_number(self.cleaned_data
@@ -76,8 +80,8 @@ class EditProviderForm(forms.Form):
         if phone_number \
            and Provider.objects.filter(phone_number=phone_number)\
                                .exclude(id=user_id).count() > 0:
-            raise forms.ValidationError(_(u"Phone number already "
-                                          u"taken by %(provider)s")
+            raise forms.ValidationError(_("Phone number already "
+                                          "taken by %(provider)s")
                                         % {'provider': Provider.objects
                                             .get(phone_number=phone_number)
                                             .name_access()})
@@ -109,8 +113,8 @@ class EditProviderForm(forms.Form):
                 level = self.cleaned_data.get('role')
 
             if self.cleaned_data.get('entity').type.slug != level:
-                raise forms.ValidationError(_(u"Entity is not valid "
-                                              u"for this Role."))
+                raise forms.ValidationError(_("Entity is not valid "
+                                              "for this Role."))
         return self.cleaned_data.get('entity')
 
 
@@ -141,7 +145,6 @@ def add_edit_user(request, user_id=None, template='add_edit_provider.html'):
                     form.cleaned_data.get('first_name'),
                     form.cleaned_data.get('last_name'))
 
-                print username
                 # generate password
                 password = random_password(username)
 
@@ -162,7 +165,7 @@ def add_edit_user(request, user_id=None, template='add_edit_provider.html'):
             provider.phone_number_extra = \
                 form.cleaned_data.get('phone_number_extra')
             provider.save()
-            messages.success(request, _(u"Profile details updated."))
+            messages.success(request, _("Profile details updated."))
 
             if not user_id and provider.email:
                 # send email with password on account creation
@@ -174,25 +177,25 @@ def add_edit_user(request, user_id=None, template='add_edit_provider.html'):
                                                 template='emails/new_account.txt',
                                                 title_template='emails/title.new_account.txt')
                 if sent:
-                    messages.success(request, _(u"An e-mail containing the "
+                    messages.success(request, _("An e-mail containing the "
                                                 "password has been sent "
                                                 "to %(email)s")
                                      % {'email': provider.email})
                 else:
-                    messages.error(request, _(u"Unable to send e-mail "
+                    messages.error(request, _("Unable to send e-mail "
                                               "to %(email)s. Please record "
                                               "and forward the password: "
                                               "%(pass)s")
                                    % {'email': provider.email,
                                       'pass': password})
                     # log exception
-                    logger.warning(u"Unable to send email to %(email)s "
+                    logger.warning("Unable to send email to %(email)s "
                                    "with Exception %(e)r"
                                    % {'email': provider.email,
                                       'e': sent_message})
             # display password if user has no email address
             elif not user_id and not provider.email:
-                messages.info(request, _(u"Please record and forward the "
+                messages.info(request, _("Please record and forward the "
                                          "generated password: %(pass)s")
                               % {'pass': password})
 
@@ -242,21 +245,21 @@ def enable_disable_user(request, user_id, activate):
     try:
         provider = Provider.objects.get(id=user_id)
     except Provider.DoesNotExist:
-        raise Http404(_(u"There is no Provider account with ID #%(id)d")
+        raise Http404(_("There is no Provider account with ID #%(id)d")
                       % {'id': int(user_id)})
 
     if provider.is_active == activate:
-        messages.warning(request, _(u"Requested status is same "
+        messages.warning(request, _("Requested status is same "
                                     "as current user status."))
     else:
         provider.is_active = activate
         provider.save()
-        messages.warning(request, _(u"%(provider)s status has been "
+        messages.warning(request, _("%(provider)s status has been "
                                     "changed to %(status)s")
                          % {'provider': provider.name(),
-                            'status': _(u"active")
+                            'status': _("active")
                             if provider.is_active
-                            else _(u"inactive")})
+                            else _("inactive")})
     return redirect('edit_user', provider.id)
 
 
@@ -268,7 +271,7 @@ def password_user(request, user_id, pwd_id):
     try:
         provider = Provider.objects.get(id=user_id)
     except Provider.DoesNotExist:
-        raise Http404(_(u"There is no Provider account with ID #%(id)d")
+        raise Http404(_("There is no Provider account with ID #%(id)d")
                       % {'id': int(user_id)})
 
     # generate and assign password
@@ -289,25 +292,25 @@ def password_user(request, user_id, pwd_id):
                                         template='emails/new_password.txt',
                                         title_template='emails/title.new_password.txt')
         if sent:
-            messages.success(request, _(u"An e-mail containing the "
+            messages.success(request, _("An e-mail containing the "
                                         "password has been sent "
                                         "to %(email)s")
                              % {'email': provider.email})
         else:
-            messages.error(request, _(u"Unable to send e-mail "
+            messages.error(request, _("Unable to send e-mail "
                                       "to %(email)s. Please record "
                                       "and forward the password: "
                                       "%(pass)s")
                            % {'email': provider.email,
                               'pass': password})
             # log exception
-            logger.warning(u"Unable to send email to %(email)s "
+            logger.warning("Unable to send email to %(email)s "
                            "with Exception %(e)r"
                            % {'email': provider.email,
                               'e': sent_message})
     # display password if user has no email address
     else:
-        messages.info(request, _(u"Please record and forward the "
+        messages.info(request, _("Please record and forward the "
                                  "generated password: %(pass)s")
                       % {'pass': password})
 

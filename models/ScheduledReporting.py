@@ -2,36 +2,44 @@
 # -*- coding: utf-8 -*-
 # vim: ai ts=4 sts=4 et sw=4 nu
 
+from __future__ import (unicode_literals, absolute_import,
+                        division, print_function)
+
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.utils.encoding import python_2_unicode_compatible
 
-from ExpectedReporting import REPORTING_LEVELS
+from bolibana.models.ExpectedReporting import REPORTING_LEVELS
+from bolibana.models.Entity import Entity
+from bolibana.models.ReportClass import ReportClass
+from bolibana.models.Period import Period
 
 
+@python_2_unicode_compatible
 class ScheduledReporting(models.Model):
 
     class Meta:
         app_label = 'bolibana'
-        verbose_name = _(u"Scheduled Reporting")
-        verbose_name_plural = _(u"Scheduled Reporting")
+        verbose_name = _("Scheduled Reporting")
+        verbose_name_plural = _("Scheduled Reporting")
         unique_together = ('report_class', 'entity')
 
-    report_class = models.ForeignKey('ReportClass')
-    entity = models.ForeignKey('Entity')
+    report_class = models.ForeignKey(ReportClass)
+    entity = models.ForeignKey(Entity)
     level = models.PositiveIntegerField(choices=REPORTING_LEVELS,
-                                        verbose_name=_(u"Reporting Level"),
+                                        verbose_name=_("Reporting Level"),
                                         blank=False, null=False)
-    start = models.ForeignKey('Period',
-                              verbose_name=_(u"Start On"),
+    start = models.ForeignKey(Period,
+                              verbose_name=_("Start On"),
                               related_name='entity_rcls_providers_starting',
                               null=True, blank=True)
-    end = models.ForeignKey('Period',
-                            verbose_name=_(u"End On"),
+    end = models.ForeignKey(Period,
+                            verbose_name=_("End On"),
                             related_name='entity_rcls_providers_ending',
                             null=True, blank=True)
 
-    def __unicode__(self):
-        return (u"%(entity)s/%(report_class)s:%(level)s"
+    def __str__(self):
+        return ("%(entity)s/%(report_class)s:%(level)s"
                 % {'entity': self.entity,
                    'report_class': self.report_class,
                    'level': self.verbose_level})
@@ -41,7 +49,7 @@ class ScheduledReporting(models.Model):
         for level, name in REPORTING_LEVELS:
             if level == self.level:
                 return name
-        return u"n/a"
+        return "n/a"
 
     @property
     def casted_start(self):

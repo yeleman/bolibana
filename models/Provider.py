@@ -8,8 +8,10 @@ from __future__ import (unicode_literals, absolute_import,
 from django.db import models
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.encoding import python_2_unicode_compatible
 
 from bolibana.tools.utils import generate_user_hash
+from bolibana.models.Access import Access
 
 
 class ActiveManager(models.Manager):
@@ -19,39 +21,40 @@ class ActiveManager(models.Manager):
                                          .filter(is_active=True)
 
 
+@python_2_unicode_compatible
 class Provider(AbstractUser):
 
     class Meta:
         app_label = 'bolibana'
-        verbose_name = _(u"Provider")
-        verbose_name_plural = _(u"Providers")
+        verbose_name = _("Provider")
+        verbose_name_plural = _("Providers")
 
     phone_number = models.CharField(max_length=12, unique=True,
                                     null=True, blank=True,
-                                    verbose_name=_(u"Phone Number"))
+                                    verbose_name=_("Phone Number"))
     phone_number_extra = models.CharField(max_length=12,
                                           null=True, blank=True,
-                                          verbose_name=_(u"Phone Number"))
-    access = models.ForeignKey('Access', null=False, blank=False,
-                               verbose_name=_(u"Access"))
+                                          verbose_name=_("Phone Number"))
+    access = models.ForeignKey(Access, null=False, blank=False,
+                               verbose_name=_("Access"))
     # password hash is an optionnal shorter form of the encrypted password
     # used in size-limted (SMS) environment.
     pwhash = models.CharField(max_length=255,
                               null=True, blank=True,
-                              verbose_name=_(u"Password Hash"))
+                              verbose_name=_("Password Hash"))
 
     # django manager first
     objects = UserManager()
     active = ActiveManager()
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name()
 
     def name(self):
         """ prefered representation of the provider's name """
         if self.first_name and self.last_name:
-            return u"%(first)s %(last)s" % {'first': self.first_name.title(),
-                                            'last': self.last_name.title()}
+            return "%(first)s %(last)s" % {'first': self.first_name.title(),
+                                           'last': self.last_name.title()}
         if self.first_name:
             return self.first_name.title()
 
@@ -62,7 +65,7 @@ class Provider(AbstractUser):
 
     def name_access(self):
         if self.access:
-            return ugettext(u"%(name)s (%(access)s)") \
+            return ugettext("%(name)s (%(access)s)") \
                 % {'name': self.name(),
                    'access': self.access.name()}
         else:

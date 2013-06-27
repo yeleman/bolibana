@@ -1,6 +1,9 @@
 #!/usr/bin/env python
-# encoding=utf-8
-# maintainer: rgaudin
+# -*- coding: utf-8 -*-
+# vim: ai ts=4 sts=4 et sw=4 nu
+
+from __future__ import (unicode_literals, absolute_import,
+                        division, print_function)
 
 
 class MissingData(Exception):
@@ -43,7 +46,7 @@ class ErrorManager(object):
         """ total number of errors in all categories """
         count = 0
         for value in self.data.values():
-            count += value.__len__()
+            count += len(value)
         return count
 
     def all(self, by_section=False):
@@ -51,7 +54,7 @@ class ErrorManager(object):
         if by_section:
             array = {}
             for sid, section in self.data.items():
-                if section.__len__() > 0:
+                if len(section) > 0:
                     array[sid] = section
             return array
 

@@ -1,7 +1,9 @@
 #!/usr/bin/env python
-# encoding=utf-8
-# maintainer: rgaudin
+# -*- coding: utf-8 -*-
+# vim: ai ts=4 sts=4 et sw=4 nu
 
+from __future__ import (unicode_literals, absolute_import,
+                        division, print_function)
 import locale
 
 from django import template
@@ -28,12 +30,12 @@ def phone_number_formatter(number):
             span = 3
         else:
             span = 2
-        return u" ".join([u"".join(number[i:i + span])
+        return " ".join([u"".join(number[i:i + span])
                            for i in range(0, len(number), span)])
 
     ind, clean_number = clean_phone_number(number)
     if ind:
-        return _(u"(%(ind)s) %(num)s") \
+        return _("(%(ind)s) %(num)s") \
             % {'ind': ind, 'num': format(clean_number)}
     return format(clean_number)
 
@@ -44,29 +46,29 @@ def formcategories(value):
     """ categorie name from category slug """
     value = value.lower()
     if value in ('u5', 'under_five'):
-        return _(u"Children Under 5yo.")
+        return _("Children Under 5yo.")
     if value in ('o5', 'over_five'):
-        return _(u"Children Over 5yo.")
+        return _("Children Over 5yo.")
     if value in ('pw', 'pregnant_women'):
-        return _(u"Pregnant Women")
+        return _("Pregnant Women")
     if value == 'period':
-        return _(u"Reporting")
+        return _("Reporting")
     if value == 'fillin':
-        return _(u"Collect / Data Entry")
+        return _("Collect / Data Entry")
     if value == 'stockout':
-        return _(u"Stock outs")
+        return _("Stock outs")
     if value == 'all':
-        return _(u"All Age")
+        return _("All Age")
     if value == 'all_over_five':
-        return u"%s avec %s" % (formcategories('o5'), formcategories('pw'))
-    return _(u"Default")
+        return "%s avec %s" % (formcategories('o5'), formcategories('pw'))
+    return _("Default")
 
 
 @register.filter(name='reporttype')
 @stringfilter
 def report_type_verbose(value):
     if value == Report.TYPE_SOURCE.__str__():
-        return u"Primaire"
+        return "Primaire"
     for v, name in Report.TYPES:
         if v.__str__() == value:
             return name
@@ -100,7 +102,7 @@ def report_yesno_verbose(value):
 def report_value(value):
     try:
         float(value)
-        return number_format(value).replace(u' ', u' ')  # non-break thin
+        return number_format(value).replace(' ', ' ')  # non-break thin
     except:
         return report_yesno_verbose(value)
 
@@ -141,7 +143,7 @@ def number_format(value, precision=2, french=True):
 @stringfilter
 def concat_strings(value, value2):
     try:
-        return u"%s%s" % (value, value2)
+        return "%s%s" % (value, value2)
     except:
         return value
 
@@ -179,7 +181,7 @@ def string_index(value, index):
 @register.filter(name='percent')
 @stringfilter
 def format_percent(value, precision=2, french=True):
-    if value == u'n/a':
+    if value == 'n/a':
         return value
     try:
         return number_format(float(value) * 100, precision, french) + '%'
@@ -190,7 +192,7 @@ def format_percent(value, precision=2, french=True):
 @register.filter(name='percentraw')
 @stringfilter
 def format_percent_us(value, precision=2, french=True):
-    if value == u"null":
+    if value == "null":
         return value
     return format_percent(value,
                           precision, french=False)[:-1].replace(',', '.')
@@ -220,13 +222,13 @@ def district_from_slug(entity):
 @stringfilter
 def stage_name(slug):
     if slug == 'cscom':
-        return _(u"Data Collection")
+        return _("Data Collection")
     if slug == 'district':
-        return _(u"District Validation")
+        return _("District Validation")
     if slug == 'region':
-        return _(u"Region Validation")
+        return _("Region Validation")
     if slug == 'over':
-        return _(u"National Analysis")
+        return _("National Analysis")
     return slug
 
 
@@ -268,7 +270,7 @@ def elipstrunc(text, nbchars=50):
             text = text[nbchars:]
         if text:
             l.append(text)
-        return u"\n".join(l)
+        return "\n".join(l)
     return text
 
 

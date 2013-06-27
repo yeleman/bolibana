@@ -1,7 +1,9 @@
 #!/usr/bin/env python
-# encoding=utf-8
-# maintainer: rgaudin
+# -*- coding: utf-8 -*-
+# vim: ai ts=4 sts=4 et sw=4 nu
 
+from __future__ import (unicode_literals, absolute_import,
+                        division, print_function)
 import logging
 
 from django.forms import ModelForm
@@ -97,10 +99,10 @@ def add_edit_entity(request, entity_id=None, template='add_edit_entity.html'):
         if form.is_valid():
             entity = form.save()
             if entity_id:
-                message = _(u"Entity %(entity)s updated.") \
+                message = _("Entity %(entity)s updated.") \
                     % {'entity': entity.display_full_name()}
             else:
-                message = _(u"Entity %(entity)s created.") \
+                message = _("Entity %(entity)s created.") \
                     % {'entity': entity.display_full_name()}
             messages.success(request, message)
             return redirect('list_entities')
@@ -128,8 +130,8 @@ def add_edit_entity(request, entity_id=None, template='add_edit_entity.html'):
                 scheduled.start = start
                 scheduled.end = end
                 scheduled.save()
-                message = _(u"Reporting activities of this Entity have"
-                            u" been updated.")
+                message = _("Reporting activities of this Entity have"
+                            " been updated.")
                 messages.success(request, message)
                 return redirect(add_edit_entity, entity_id=entity_id)
             else:

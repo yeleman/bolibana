@@ -76,8 +76,8 @@ class Http500Middleware(object):
             #     pass
             logging.exception("500 Error raised.")
             # if not, display access_error and load it with exception details
-            message = u"%s: %s" % (exception.__class__.__name__,
-                                   str(exception))
+            message = "%s: %s" % (exception.__class__.__name__,
+                                  exception)
             return access_error(request, message)
 
     def process_response(self, request, response):
@@ -86,5 +86,5 @@ class Http500Middleware(object):
             # we are filling error message with whatever the response is.
             # this could be terrible if content is a webpage although not
             # that likely to happen.
-            return access_error(request, u"Unknown")
+            return access_error(request, "Unknown")
         return response

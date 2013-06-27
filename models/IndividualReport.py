@@ -6,10 +6,12 @@ from __future__ import (unicode_literals, absolute_import,
                         division, print_function)
 
 from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.encoding import python_2_unicode_compatible
 
 from bolibana.models.BaseReport import BaseReport
 
 
+@python_2_unicode_compatible
 class IndividualReport(BaseReport):
 
     """ Applies to an unique target whose not going to be tracked.
@@ -18,11 +20,11 @@ class IndividualReport(BaseReport):
 
     class Meta:
         app_label = 'bolibana'
-        verbose_name = _(u"individual Report")
-        verbose_name_plural = _(u"Individual Reports")
+        verbose_name = _("individual Report")
+        verbose_name_plural = _("Individual Reports")
         abstract = True
 
-    def __unicode__(self):
-        return ugettext(u"IDVR%(id)d - %(date)s") \
+    def __str__(self):
+        return ugettext("IDVR%(id)d - %(date)s") \
             % {'id': self.id,
                'date': self.created_on.strftime('%d.%m.%Y')}

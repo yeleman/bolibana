@@ -2,6 +2,10 @@
 # -*- coding: utf-8 -*-
 # vim: ai ts=4 sts=4 et sw=4 nu
 
+from __future__ import (unicode_literals, absolute_import,
+                        division, print_function)
+import collections
+
 ''' Drop-in caching decorator for functions
 
     Uses django cache framework to cache the result of any function.
@@ -18,7 +22,7 @@
 from functools import wraps
 
 DEFAULT_CACHE_EXPIRY = 15 * 60  # 15mn
-NOT_FOUND = u'#not-found#'
+NOT_FOUND = '#not-found#'
 
 
 class CacheNotAvailable(object):
@@ -157,7 +161,7 @@ def cache_result(ident=None, store='default'):
             # the cache key is compose of a prefix and an ident string
             # in most cases, the prefix would be the HTTP method (GET, POST,..)
             # and the ident string would be an URL
-            if callable(ident):
+            if isinstance(ident, collections.Callable):
                 cache_key = ident(*args, **kwargs)
             else:
                 cache_key = ident

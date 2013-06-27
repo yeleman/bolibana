@@ -1,6 +1,9 @@
 #!/usr/bin/env python
-# encoding=utf-8
-# maintainer: Fadiga
+# -*- coding: utf-8 -*-
+# vim: ai ts=4 sts=4 et sw=4 nu
+
+from __future__ import (unicode_literals, absolute_import,
+                        division, print_function)
 
 from django.contrib import messages
 from django.shortcuts import render, redirect
@@ -9,7 +12,9 @@ from django import forms
 
 from mptt.fields import TreeNodeChoiceField
 
-from bolibana.models import Role, Provider, Entity
+from bolibana.models.Role import Role
+from bolibana.models.Provider import Provider
+from bolibana.models.Entity import Entity
 from bolibana.web.decorators import provider_permission
 
 from nosmsd.utils import send_sms
@@ -17,18 +22,18 @@ from nosmsd.utils import send_sms
 
 class AddressBookForm(forms.Form):
 
-    role = forms.ChoiceField(label=ugettext_lazy(u"Role"),
-                             choices=[('', _(u"All"))] + [(role.slug, role.name)
-                                                          for role in Role.objects.all()
-                                                                          .order_by('name')])
+    role = forms.ChoiceField(label=ugettext_lazy("Role"),
+                             choices=[('', _("All"))] + [(role.slug, role.name)
+                                                         for role in Role.objects.all()
+                                                                         .order_by('name')])
     entity = TreeNodeChoiceField(queryset=Entity.tree.all(),
-                                 level_indicator=u'---',
-                                 label=ugettext_lazy(u"Entity"))
+                                 level_indicator='---',
+                                 label=ugettext_lazy("Entity"))
 
 
 class MessageForm(forms.Form):
 
-    text = forms.CharField(widget=forms.Textarea(), label=(u"Texte"))
+    text = forms.CharField(widget=forms.Textarea(), label=("Texte"))
 
     def clean_text(self):
         return self.cleaned_data.get('text')[:150]
@@ -92,11 +97,11 @@ def adressbook_send_sms(request):
                 send_sms(provider.phone_number,
                          form_msg.cleaned_data.get('text'))
             messages.success(request,
-                             _(u"SMS en cours d'envoie à %d destinataires")
+                             _("SMS en cours d'envoie à %d destinataires")
                              % providers.count())
             return redirect("log_message")
         else:
             messages.error(request,
-                           _(u"SMS non envoyé : Vous demandez"
-                             u"d'envoyer un SMS a tous les utisateurs"))
+                           _("SMS non envoyé : Vous demandez"
+                             "d'envoyer un SMS a tous les utisateurs"))
             return redirect(addressbook)

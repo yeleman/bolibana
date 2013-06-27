@@ -1,16 +1,21 @@
 #!/usr/bin/env python
-# encoding=utf-8
-# maintainer: rgaudin
+# -*- coding: utf-8 -*-
+# vim: ai ts=4 sts=4 et sw=4 nu
+
+from __future__ import (unicode_literals, absolute_import,
+                        division, print_function)
 
 from django.db import models
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import ugettext_lazy as _, ugettext
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
+from django.utils.encoding import python_2_unicode_compatible
 
-from django.contrib.auth.models import ContentType
+from bolibana.models.Role import Role
 
 
+@python_2_unicode_compatible
 class Access(models.Model):
     """ Bundle of a Role for a target object. Usually an Entity.
 
@@ -20,27 +25,27 @@ class Access(models.Model):
     class Meta:
         app_label = 'bolibana'
         unique_together = ('role', 'content_type', 'object_id')
-        verbose_name = _(u"Access")
-        verbose_name_plural = _(u"Access")
+        verbose_name = _("Access")
+        verbose_name_plural = _("Access")
 
-    role = models.ForeignKey('Role', verbose_name=_(u"Role"))
+    role = models.ForeignKey(Role, verbose_name=_("Role"))
     # entity
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
     target = generic.GenericForeignKey('content_type', 'object_id')
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name()
 
     def name(self):
         try:
             if getattr(self.target, 'level', -1) == 0:
-                return self.role.__unicode__()
+                return str(self.role)
             else:
-                return ugettext(u"%(role)s on %(target)s") \
-                                % {'role': self.role, 'target': self.target}
+                return ugettext("%(role)s on %(target)s") \
+                    % {'role': self.role, 'target': self.target}
         except ObjectDoesNotExist:
-            return u"*Invalid*"
+            return "*Invalid*"
 
     @classmethod
     def target_data(cls, target):

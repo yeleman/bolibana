@@ -1,7 +1,9 @@
 #!/usr/bin/env python
-# encoding=utf-8
-# maintainer: rgaudin
+# -*- coding: utf-8 -*-
+# vim: ai ts=4 sts=4 et sw=4 nu
 
+from __future__ import (unicode_literals, absolute_import,
+                        division, print_function)
 import unicodedata
 import random
 import re
@@ -59,11 +61,11 @@ def username_from_name(first_name, last_name):
 
     def jdoe(first, last):
         """ first name initial followed by last name format """
-        return u"%s%s" % (first[0], last)
+        return "%s%s" % (first[0], last)
 
     def johndoe(first, last):
         """ first name followed by last name format """
-        return u"%s%s" % (first, last)
+        return "%s%s" % (first, last)
 
     def iterate(username):
         """ adds and increment a counter at end of username """
@@ -75,7 +77,7 @@ def username_from_name(first_name, last_name):
             if sp.__len__() == 3:
                 # increment existing counter
                 username = sp[0]
-                salt = unicode(int(sp[1]) + 1)
+                salt = str(int(sp[1]) + 1)
             else:
                 # start counter at 1
                 salt = '1'

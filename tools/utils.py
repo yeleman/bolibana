@@ -1,11 +1,14 @@
 #!/usr/bin/env python
-# encoding=utf-8
-# maintainer: rgaudin
+# -*- coding: utf-8 -*-
+# vim: ai ts=4 sts=4 et sw=4 nu
 
+from __future__ import (unicode_literals, absolute_import,
+                        division, print_function)
 import logging
 import smtplib
 import re
 import random
+import six
 
 from django.core import mail
 from django.conf import settings
@@ -18,27 +21,27 @@ from django.contrib.auth.models import ContentType
 from bolibana.models import Access, Role
 
 proverbs = [
-    ('bm', u"dɔlɔ tɛ bɔ bɛɛ ka fɔ la",
-     u"La bière n'est pas préparée à la demande de n'importe qui."),
-    ('bm', u"hakilima bɛɛ ye kulu kuncɛmana dɔn fuga ye",
-     u"Tout homme raisonnable sait que sur la montagne "
-     u"il y a une surface plate."),
-    ('bm', u"ji ma masa dɔn", u"Le fleuve ne connaît pas le roi."),
-    ('bm', u"mɔgɔ fila la tuma dɔ tɛ kelen ye",
-     u"Un moment ne reflète pas la même chose pour deux personnes."),
-    ('bm', u"ni warabilen bolo tɛ zaban mun sɔrɔ a ba fɔ ko a kumulen dɔ",
-     u"Du zaban que le singe ne peut attraper, il dit qu'il est amère."),
-    ('bm', u"seli si tɛ buranmuso sudon bɔ",
-     u"Aucune prière ne vaut l'enterrement de sa belle-mère."),
-    ('bm', u"tulon-ka-yɛlɛ bɛ dugu diya",
-     u"Le divertissement et les rires rendent agréable la vie au village."),
-    ('ses', u"amar guusu mana tii hansi huro do",
-     u"Le trou de la panthère n'a pas de crotte de chien. "),
-    ('ses', u"goy ra nafaw goo",
-     u"C'est en travaillant que l'on devient utile."),
-    ('ses', u"kaani si boro wii", u"Le plaisir ne tue pas l'homme."),
-    ('ses', u"waafakay cine si bara", u"L'entente n'a pas d'égal."),
-    ('ses', u"šennikoonu jew no", u"La parole sans importance, c'est la soif.")
+    ('bm', "dɔlɔ tɛ bɔ bɛɛ ka fɔ la",
+     "La bière n'est pas préparée à la demande de n'importe qui."),
+    ('bm', "hakilima bɛɛ ye kulu kuncɛmana dɔn fuga ye",
+     "Tout homme raisonnable sait que sur la montagne "
+     "il y a une surface plate."),
+    ('bm', "ji ma masa dɔn", "Le fleuve ne connaît pas le roi."),
+    ('bm', "mɔgɔ fila la tuma dɔ tɛ kelen ye",
+     "Un moment ne reflète pas la même chose pour deux personnes."),
+    ('bm', "ni warabilen bolo tɛ zaban mun sɔrɔ a ba fɔ ko a kumulen dɔ",
+     "Du zaban que le singe ne peut attraper, il dit qu'il est amère."),
+    ('bm', "seli si tɛ buranmuso sudon bɔ",
+     "Aucune prière ne vaut l'enterrement de sa belle-mère."),
+    ('bm', "tulon-ka-yɛlɛ bɛ dugu diya",
+     "Le divertissement et les rires rendent agréable la vie au village."),
+    ('ses', "amar guusu mana tii hansi huro do",
+     "Le trou de la panthère n'a pas de crotte de chien. "),
+    ('ses', "goy ra nafaw goo",
+     "C'est en travaillant que l'on devient utile."),
+    ('ses', "kaani si boro wii", "Le plaisir ne tue pas l'homme."),
+    ('ses', "waafakay cine si bara", "L'entente n'a pas d'égal."),
+    ('ses', "šennikoonu jew no", "La parole sans importance, c'est la soif.")
 ]
 
 logger = logging.getLogger(__name__)
@@ -76,17 +79,17 @@ def send_email(recipients, message=None, template=None, context={},
     # might happen everytime a user did not set email address.
     try:
         while True:
-            recipients.remove(u"")
+            recipients.remove("")
     except ValueError:
         pass
 
     # no need to continue if there's no recipients
     if recipients.__len__() == 0:
-        return (False, ValueError(_(u"No Recipients for that message")))
+        return (False, ValueError(_("No Recipients for that message")))
 
     # no body text forbidden. most likely an error
     if not message and not template:
-        return (False, ValueError(_(u"Unable to send empty email messages")))
+        return (False, ValueError(_("Unable to send empty email messages")))
 
     # build email body. rendered template has priority
     if template:
@@ -96,7 +99,7 @@ def send_email(recipients, message=None, template=None, context={},
 
     # if no title provided, use default one. empty title allowed
     if title is None and not title_template:
-        email_subject = _(u"Message from %(site)s") \
+        email_subject = _("Message from %(site)s") \
             % {'site': Site.objects.get_current().name}
 
     # build email subject. rendered template has priority
@@ -130,7 +133,7 @@ def full_url(request=None, path=''):
         path = path[1:]
     return 'http%(ssl)s://%(domain)s/%(path)s' \
            % {'domain': get_current_site(request).domain,
-              'path': path, 'ssl': u"s" if settings.USE_HTTPS else u''}
+              'path': path, 'ssl': "s" if settings.USE_HTTPS else ''}
 
 ALL_COUNTRY_CODES = [1242, 1246, 1264, 1268, 1284, 1340, 1345, 1441, 1473,
                      1599, 1649, 1664, 1670, 1671, 1684, 1758, 1767, 1784,
@@ -170,8 +173,8 @@ def clean_phone_number(number):
                 return indic.__str__()
         return ''
 
-    if not isinstance(number, basestring):
-        number = number.__str__()
+    if not isinstance(number, six.string_types):
+        number = str(number)
 
     # cleanup markup
     clean_number = re.sub(r'[^\d]', '', number)
@@ -212,11 +215,11 @@ def provider_can_or_403(permission, provider, entity):
         return True
     else:
         if entity:
-            message = _(u"You don't have permission %(perm)s on %(entity)s") \
+            message = _("You don't have permission %(perm)s on %(entity)s") \
                 % {'perm': permission,
                    'entity': entity.display_full_name()}
         else:
-            message = _(u"You don't have permission %(perm)s") \
+            message = _("You don't have permission %(perm)s") \
                 % {'perm': permission}
         raise Http403(message)
 
@@ -256,7 +259,7 @@ def get_level_for(provider):
 
 def random_proverb():
     """ sends a (lang, original, translation) random proverb fortune """
-    langs = {'ses': u"soŋay koyraboro šenni", 'bm': u"bamanakan"}
+    langs = {'ses': "soŋay koyraboro šenni", 'bm': "bamanakan"}
     p = proverbs[random.randint(0, len(proverbs) - 1)]
     return (langs[p[0]], p[1], p[2])
 

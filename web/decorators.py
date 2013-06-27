@@ -1,6 +1,9 @@
 #!/usr/bin/env python
-# encoding=utf-8
-# maintainer: rgaudin
+# -*- coding: utf-8 -*-
+# vim: ai ts=4 sts=4 et sw=4 nu
+
+from __future__ import (unicode_literals, absolute_import,
+                        division, print_function)
 
 from django.contrib import messages
 from django.shortcuts import redirect
@@ -25,9 +28,9 @@ def provider_required(target):
             # if user is logged-in (non-provider)
             # send him a message
             if request.user.is_authenticated():
-                messages.error(request, _(u"The credentials you are "
-                                          u"using to log in are not "
-                                          u"valid. Please contact ANTIM."))
+                messages.error(request, _("The credentials you are "
+                                          "using to log in are not "
+                                          "valid. Please contact ANTIM."))
             # then foward logged-in or not to the login page.
             # logged-in users will see message there.
             return redirect('/login')

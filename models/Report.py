@@ -9,40 +9,44 @@ from django.dispatch import receiver
 from django.db import models
 from django.db.models.signals import pre_save, post_save
 from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.encoding import python_2_unicode_compatible
 
 from bolibana.models.BaseReport import BaseReport
+from bolibana.models.Period import Period
+from bolibana.models.Entity import Entity
 
 
+@python_2_unicode_compatible
 class Report(BaseReport):
 
     """ Applies to period-entity dependent report. """
 
     TYPE_SOURCE = 'TYPE_SOURCE'
     TYPE_AGGREGATED = 'TYPE_AGGREGATED'
-    TYPES = ((TYPE_SOURCE, _(u"Source")), (TYPE_AGGREGATED, _(u"Aggregated")))
+    TYPES = ((TYPE_SOURCE, _("Source")), (TYPE_AGGREGATED, _("Aggregated")))
 
     class Meta:
         app_label = 'bolibana'
         unique_together = ('period', 'entity', 'type')
-        verbose_name = _(u"Report")
-        verbose_name_plural = _(u"Reports")
+        verbose_name = _("Report")
+        verbose_name_plural = _("Reports")
         abstract = True
 
-    type = models.CharField(max_length=30, choices=TYPES, verbose_name=_(u"Type"))
+    type = models.CharField(max_length=30, choices=TYPES, verbose_name=_("Type"))
     receipt = models.CharField(max_length=30, unique=True,
                                blank=True, null=False,
-                               verbose_name=_(u"Receipt"))
-    period = models.ForeignKey('Period',
+                               verbose_name=_("Receipt"))
+    period = models.ForeignKey(Period,
                                related_name='%(app_label)s_'
                                             '%(class)s_reports',
-                               verbose_name=_(u"Period"))
-    entity = models.ForeignKey('Entity',
+                               verbose_name=_("Period"))
+    entity = models.ForeignKey(Entity,
                                related_name='%(app_label)s_'
                                             '%(class)s_reports',
-                               verbose_name=_(u"Entity"))
+                               verbose_name=_("Entity"))
 
-    def __unicode__(self):
-        return ugettext(u"%(entity)s/%(period)s") \
+    def __str__(self):
+        return ugettext("%(entity)s/%(period)s") \
             % {'entity': self.entity,
                'period': self.period}
 

@@ -1,7 +1,10 @@
 #!/usr/bin/env python
-# encoding=utf-8
-# maintainer: rgaudin
+# -*- coding: utf-8 -*-
+# vim: ai ts=4 sts=4 et sw=4 nu
 
+from __future__ import (unicode_literals, absolute_import,
+                        division, print_function)
+import six
 import re
 import logging
 
@@ -19,12 +22,12 @@ class ExcelTypeConverter(object):
     @classmethod
     def clean(cls, value):
         """ a stripped unicode """
-        return unicode(value).strip()
+        return ("%s" % value).strip()
 
     @classmethod
     def clean_str(cls, value):
         """ lowercased stripped unicode """
-        return unicode(value).strip().lower()
+        return cls.clean(value).lower()
 
     @classmethod
     def ChoiceList(cls, value, choicelist):
@@ -32,7 +35,7 @@ class ExcelTypeConverter(object):
         if value in choicelist:
             return value
         else:
-            raise ValueError(u"%s not in %s" % (value, choicelist))
+            raise ValueError("%s not in %s" % (value, choicelist))
 
     @classmethod
     def LowerChoiceList(cls, value, choicelist):
@@ -40,8 +43,8 @@ class ExcelTypeConverter(object):
         if cls.clean_str(value) in choicelist:
             return cls.clean_str(value)
         else:
-            raise ValueError(u"%s not in %s" % (cls.clean_str(value),
-                                                choicelist))
+            raise ValueError("%s not in %s" % (cls.clean_str(value),
+                                               choicelist))
 
     @classmethod
     def NormalizedChoiceList(cls, value, choicemap):
@@ -49,8 +52,8 @@ class ExcelTypeConverter(object):
         if cls.clean_str(value) in choicemap:
             return choicemap[cls.clean_str(value)]
         else:
-            raise ValueError(u"%s not in %s" % (cls.clean_str(value),
-                                                choicemap.keys()))
+            raise ValueError("%s not in %s" % (cls.clean_str(value),
+                                               list(choicemap.keys())))
 
     @classmethod
     def NormalizedIntChoiceList(cls, value, choicelist):
@@ -58,8 +61,8 @@ class ExcelTypeConverter(object):
         if int(value) in choicelist:
             return int(value)
         else:
-            raise ValueError(u"%s not in %s" % (cls.clean_str(value),
-                                                choicelist))
+            raise ValueError("%s not in %s" % (cls.clean_str(value),
+                                               choicelist))
 
 
 class ExcelFormField(object):
@@ -120,17 +123,17 @@ class ExcelForm(object):
 
         try:
             book = xlrd.open_workbook(self.filepath)
-            if isinstance(sheet, basestring):
+            if isinstance(sheet, six.string_types):
                 self.ws = book.sheet_by_name(sheet)
             elif isinstance(sheet, int):
                 self.ws = book.sheets()[sheet]
             else:
                 self.ws = book.sheets()[0]
         except Exception as e:
-            logger.warning(u"Unable to read Excel Uploaded file %(path)s. "
+            logger.warning("Unable to read Excel Uploaded file %(path)s. "
                            "Raised %(e)r" % {'path': self.filepath, 'e': e})
-            self.errors.add(u"Impossible d'ouvrir le masque de saisie. "
-                            u"Le fichier est corrompu ou a été modifié.")
+            self.errors.add("Impossible d'ouvrir le masque de saisie. "
+                            "Le fichier est corrompu ou a été modifié.")
             return
 
         for fieldid, field in self.mapping().items():

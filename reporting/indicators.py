@@ -1,7 +1,9 @@
 #!/usr/bin/env python
-# encoding=utf-8
-# maintainer: rgaudin
+# -*- coding: utf-8 -*-
+# vim: ai ts=4 sts=4 et sw=4 nu
 
+from __future__ import (unicode_literals, absolute_import,
+                        division, print_function)
 from functools import wraps
 from inspect import getmembers, ismethod
 
@@ -67,7 +69,7 @@ def indicator(index=0, reference=None):
 
 
 def cache_ident(instance):
-    return (u'%(id)s_%(period)s_%(entity)s'
+    return ('%(id)s_%(period)s_%(entity)s'
             % {'id': instance.id,
                'period': '#'.join([p.strid() for p in instance.periods]),
                'entity': instance.entity.slug})
@@ -94,9 +96,9 @@ class IndicatorTable(object):
 
     # sub-class level default options
     default_options = {}
-    name = u""
-    caption = u""
-    title = u""
+    name = ""
+    caption = ""
+    title = ""
     type = 'table'
     graph_type = 'column'
 

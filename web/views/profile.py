@@ -1,6 +1,9 @@
 #!/usr/bin/env python
-# encoding=utf-8
-# maintainer: rgaudin
+# -*- coding: utf-8 -*-
+# vim: ai ts=4 sts=4 et sw=4 nu
+
+from __future__ import (unicode_literals, absolute_import,
+                        division, print_function)
 
 from django import forms
 from django.contrib import messages
@@ -13,23 +16,23 @@ from bolibana.web.decorators import provider_required
 class ProviderForm(forms.Form):
 
     first_name = forms.CharField(max_length=50, required=False,
-                                 label=ugettext_lazy(u"First Name"))
+                                 label=ugettext_lazy("First Name"))
     last_name = forms.CharField(max_length=50, required=False,
-                                label=ugettext_lazy(u"Last Name"))
+                                label=ugettext_lazy("Last Name"))
     email = forms.EmailField(required=False,
-                             label=ugettext_lazy(u"E-mail Address"))
+                             label=ugettext_lazy("E-mail Address"))
     phone_number = forms.CharField(max_length=12, required=False,
-                                   label=ugettext_lazy(u"Phone Number"))
+                                   label=ugettext_lazy("Phone Number"))
     phone_number_extra = forms.CharField(max_length=12, required=False,
-                                         label=ugettext_lazy(u"Phone Number"))
+                                         label=ugettext_lazy("Phone Number"))
 
 
 class ProviderPasswordForm(forms.Form):
     password1 = forms.CharField(max_length=100,
-                                label=ugettext_lazy(u"New Password"),
+                                label=ugettext_lazy("New Password"),
                                 widget=forms.PasswordInput(render_value=False))
     password2 = forms.CharField(max_length=100,
-                                label=ugettext_lazy(u"Confirm New Password"),
+                                label=ugettext_lazy("Confirm New Password"),
                                 widget=forms.PasswordInput(render_value=False))
 
     def clean_password2(self):
@@ -37,9 +40,9 @@ class ProviderPasswordForm(forms.Form):
         password2 = self.cleaned_data.get('password2')
 
         if not password2:
-            raise forms.ValidationError(_(u"You must confirm your password"))
+            raise forms.ValidationError(_("You must confirm your password"))
         if password1 != password2:
-            raise forms.ValidationError(_(u"Your passwords do not match"))
+            raise forms.ValidationError(_("Your passwords do not match"))
         return password2
 
 
@@ -60,7 +63,7 @@ def edit_profile(request, template='edit_profile.html'):
             provider.phone_number_extra = \
                 form.cleaned_data.get('phone_number_extra')
             provider.save()
-            messages.success(request, _(u"Profile details updated."))
+            messages.success(request, _("Profile details updated."))
             return redirect('index')
     elif is_password:
         form = ProviderForm(provider.to_dict())
@@ -70,7 +73,7 @@ def edit_profile(request, template='edit_profile.html'):
         if passwd_form.is_valid() and is_password:
             provider.set_password(passwd_form.cleaned_data.get('password1'))
             provider.save()
-            messages.success(request, _(u"Password updated."))
+            messages.success(request, _("Password updated."))
             return redirect('logout')
     elif not is_password:
         passwd_form = ProviderPasswordForm()

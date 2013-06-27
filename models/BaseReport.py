@@ -8,6 +8,9 @@ from __future__ import (unicode_literals, absolute_import,
 from django.db import models
 from django.db.models.query import QuerySet
 from django.utils.translation import ugettext_lazy as _
+from django.utils.encoding import python_2_unicode_compatible
+
+from bolibana.models.Provider import Provider
 
 
 def unvalidated_status():
@@ -76,6 +79,7 @@ class CompleteManager(models.Manager):
             .filter(_status__in=complete_status())
 
 
+@python_2_unicode_compatible
 class BaseReport(models.Model):
 
     STATUS_UNSAVED = 'STATUS_UNSAVED'
@@ -90,21 +94,21 @@ class BaseReport(models.Model):
     STATUS_MODIFIED_VALIDATOR = 'STATUS_MODIFIED_VALIDATOR'
     STATUS_AUTO_VALIDATED = 'STATUS_AUTO_VALIDATED'
 
-    STATUSES = ((STATUS_CREATED, u"Created"),
-                (STATUS_MODIFIED_AUTHOR, u"Modified by author"),
-                (STATUS_MODIFIED_VALIDATOR, u"Modified by validator"),
-                (STATUS_AUTO_VALIDATED, u"Auto-validated"),
-                (STATUS_VALIDATED, u"Validated"))
-    STATUSES = ((STATUS_UNSAVED, u"Unsaved"),
-                (STATUS_CREATED, u"Created"),
-                (STATUS_INCOMPLETE, u"Incomplete"),
-                (STATUS_ERRONEOUS, u"Erroneous"),
-                (STATUS_COMPLETE, u"Complete"),
-                (STATUS_VALIDATED, u"Validated"),
-                (STATUS_CLOSED, u"Closed"),
-                (STATUS_MODIFIED_AUTHOR, u"Modified by author"),
-                (STATUS_MODIFIED_VALIDATOR, u"Modified by validator"),
-                (STATUS_AUTO_VALIDATED, u"Auto-validated"))
+    STATUSES = ((STATUS_CREATED, "Created"),
+                (STATUS_MODIFIED_AUTHOR, "Modified by author"),
+                (STATUS_MODIFIED_VALIDATOR, "Modified by validator"),
+                (STATUS_AUTO_VALIDATED, "Auto-validated"),
+                (STATUS_VALIDATED, "Validated"))
+    STATUSES = ((STATUS_UNSAVED, "Unsaved"),
+                (STATUS_CREATED, "Created"),
+                (STATUS_INCOMPLETE, "Incomplete"),
+                (STATUS_ERRONEOUS, "Erroneous"),
+                (STATUS_COMPLETE, "Complete"),
+                (STATUS_VALIDATED, "Validated"),
+                (STATUS_CLOSED, "Closed"),
+                (STATUS_MODIFIED_AUTHOR, "Modified by author"),
+                (STATUS_MODIFIED_VALIDATOR, "Modified by validator"),
+                (STATUS_AUTO_VALIDATED, "Auto-validated"))
 
     class Meta:
         app_label = 'bolibana'
@@ -114,24 +118,24 @@ class BaseReport(models.Model):
     _status = models.CharField(max_length=30,
                                choices=STATUSES,
                                default=STATUS_CREATED,
-                               verbose_name=_(u"Status"))
+                               verbose_name=_("Status"))
 
     # Provider who created report. never altered.
-    created_by = models.ForeignKey('Provider',
+    created_by = models.ForeignKey(Provider,
                                    related_name='%(app_label)s_'
                                                 '%(class)s_reports',
-                                   verbose_name=_(u"Created By"))
+                                   verbose_name=_("Created By"))
     # date of creation. Never altered.
     created_on = models.DateTimeField(auto_now_add=True,
-                                      verbose_name=_(u"Created On"))
+                                      verbose_name=_("Created On"))
 
     # last Provider who edited report. Initialized with created_by
-    modified_by = models.ForeignKey('Provider',
+    modified_by = models.ForeignKey(Provider,
                                     null=True, blank=True,
-                                    verbose_name=_(u"Modified By"))
+                                    verbose_name=_("Modified By"))
     # last time report was editer. Initialized with created_on
     modified_on = models.DateTimeField(auto_now=True,
-                                       verbose_name=_(u"Modified On"))
+                                       verbose_name=_("Modified On"))
 
     # django manager first
     objects = ValidationManager()  # models.Manager()
