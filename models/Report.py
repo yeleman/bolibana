@@ -46,9 +46,9 @@ class Report(BaseReport):
                                verbose_name=_("Entity"))
 
     def __str__(self):
-        return ugettext("%(entity)s/%(period)s") \
-            % {'entity': self.entity,
-               'period': self.period}
+        return ugettext("{entity}/{period}").format(
+            entity=self.entity,
+            period=self.period)
 
     @classmethod
     def create(cls, period, entity, author, *args, **kwargs):
@@ -75,12 +75,12 @@ class Report(BaseReport):
 
         DOW = ['D', 'L', 'M', 'E', 'J', 'V', 'S']
 
-        receipt = '%(id)d/%(entity)s-%(day)s-%(dow)s' \
-                  % {'day': instance.created_on.strftime('%j'),
-                     'dow': DOW[int(instance.created_on.strftime('%w'))],
-                     'entity': instance.entity.slug,
-                     'id': instance.id,
-                     'period': instance.period.id}
+        receipt = '{id:d}/{entity}-{day}-{dow}'.format(
+            day=instance.created_on.strftime('%j'),
+            dow=DOW[int(instance.created_on.strftime('%w'))],
+            entity=instance.entity.slug,
+            id=instance.id,
+            period=instance.period.id)
         return receipt
 
 

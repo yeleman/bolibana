@@ -50,7 +50,7 @@ class ReportClass(models.Model):
 
     @property
     def period_class(self):
-        return import_path('bolibana.models.Period.%s' % self.period_cls)
+        return import_path('bolibana.models.Period.{}'.format(self.period_cls))
 
     @property
     def report_class(self):

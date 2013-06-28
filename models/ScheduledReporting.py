@@ -39,10 +39,10 @@ class ScheduledReporting(models.Model):
                             null=True, blank=True)
 
     def __str__(self):
-        return ("%(entity)s/%(report_class)s:%(level)s"
-                % {'entity': self.entity,
-                   'report_class': self.report_class,
-                   'level': self.verbose_level})
+        return "{entity}/{report_class}:{level}".format(
+            entity=self.entity,
+            report_class=self.report_class,
+            level=self.verbose_level)
 
     @property
     def verbose_level(self):

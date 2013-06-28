@@ -4,6 +4,7 @@
 
 from __future__ import (unicode_literals, absolute_import,
                         division, print_function)
+import six
 
 from django.db import models
 from django.core.exceptions import ObjectDoesNotExist
@@ -40,10 +41,13 @@ class Access(models.Model):
     def name(self):
         try:
             if getattr(self.target, 'level', -1) == 0:
-                return str(self.role)
+                if six.PY3:
+                    return self.role
+                else:
+                    return self.role.__unicode__()
             else:
-                return ugettext("%(role)s on %(target)s") \
-                    % {'role': self.role, 'target': self.target}
+                return ugettext("{role} on {target}").format(
+                    role=self.role, target=self.target)
         except ObjectDoesNotExist:
             return "*Invalid*"
 

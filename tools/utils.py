@@ -99,8 +99,8 @@ def send_email(recipients, message=None, template=None, context={},
 
     # if no title provided, use default one. empty title allowed
     if title is None and not title_template:
-        email_subject = _("Message from %(site)s") \
-            % {'site': Site.objects.get_current().name}
+        email_subject = _("Message from {site}").format(
+            site=Site.objects.get_current().name)
 
     # build email subject. rendered template has priority
     if title_template:
@@ -131,9 +131,9 @@ def send_email(recipients, message=None, template=None, context={},
 def full_url(request=None, path=''):
     if path.startswith('/'):
         path = path[1:]
-    return 'http%(ssl)s://%(domain)s/%(path)s' \
-           % {'domain': get_current_site(request).domain,
-              'path': path, 'ssl': "s" if settings.USE_HTTPS else ''}
+    return 'http{ssl}://{domain}/{path}'.format(
+        domain=get_current_site(request).domain,
+        path=path, ssl="s" if settings.USE_HTTPS else '')
 
 ALL_COUNTRY_CODES = [1242, 1246, 1264, 1268, 1284, 1340, 1345, 1441, 1473,
                      1599, 1649, 1664, 1670, 1671, 1684, 1758, 1767, 1784,
@@ -215,12 +215,11 @@ def provider_can_or_403(permission, provider, entity):
         return True
     else:
         if entity:
-            message = _("You don't have permission %(perm)s on %(entity)s") \
-                % {'perm': permission,
-                   'entity': entity.display_full_name()}
+            message = _("You don't have permission %(perm)s on %(entity)s").format(
+                perm=permission,
+                entity=entity.display_full_name())
         else:
-            message = _("You don't have permission %(perm)s") \
-                % {'perm': permission}
+            message = _("You don't have permission {perm}").format(perm=permission)
         raise Http403(message)
 
 
@@ -313,7 +312,7 @@ def generate_receipt(instance, fix='', add_random=False, format=None):
                       'fix': fix,
                       'rand': rand_part}
 
-        receipt = format % value_dict
+        receipt = format.format(**value_dict)
         return receipt
 
 
@@ -322,7 +321,7 @@ def generate_user_hash(username, password, algo=None):
 
     import binascii
 
-    orig_str = '%s+%s' % (username, password)
+    orig_str = '{}+{}'.format(username, password)
     val = orig_str
     for x in range(0, 2000):
         val = str(binascii.crc32(val))

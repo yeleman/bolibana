@@ -97,8 +97,8 @@ def adressbook_send_sms(request):
                 send_sms(provider.phone_number,
                          form_msg.cleaned_data.get('text'))
             messages.success(request,
-                             _("SMS en cours d'envoie à %d destinataires")
-                             % providers.count())
+                             _("SMS en cours d'envoie à {} destinataires")
+                             .format(providers.count()))
             return redirect("log_message")
         else:
             messages.error(request,

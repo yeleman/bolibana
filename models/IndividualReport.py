@@ -25,6 +25,6 @@ class IndividualReport(BaseReport):
         abstract = True
 
     def __str__(self):
-        return ugettext("IDVR%(id)d - %(date)s") \
-            % {'id': self.id,
-               'date': self.created_on.strftime('%d.%m.%Y')}
+        return ugettext("IDVR{id:d} - {date}").format(
+            id=self.id,
+            date=self.created_on.strftime('%d.%m.%Y'))

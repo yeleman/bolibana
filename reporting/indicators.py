@@ -69,10 +69,10 @@ def indicator(index=0, reference=None):
 
 
 def cache_ident(instance):
-    return ('%(id)s_%(period)s_%(entity)s'
-            % {'id': instance.id,
-               'period': '#'.join([p.strid() for p in instance.periods]),
-               'entity': instance.entity.slug})
+    return '{id}_{period}_{entity}'.format(
+        id=instance.id,
+        period='#'.join([p.strid() for p in instance.periods]),
+        entity=instance.entity.slug)
 
 
 class NoSourceData(Exception):
@@ -159,7 +159,7 @@ class IndicatorTable(object):
     def line_index_slug(self, name):
         """ sorting-safe index slug for a line """
         try:
-            return '%s_%s' % (getattr(self, name)._index, name)
+            return '{}_{}'.format(getattr(self, name)._index, name)
         except:
             return name
 

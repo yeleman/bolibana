@@ -53,8 +53,9 @@ class Provider(AbstractUser):
     def name(self):
         """ prefered representation of the provider's name """
         if self.first_name and self.last_name:
-            return "%(first)s %(last)s" % {'first': self.first_name.title(),
-                                           'last': self.last_name.title()}
+            return "{first} {last}".format(
+                first=self.first_name.title(),
+                last=self.last_name.title())
         if self.first_name:
             return self.first_name.title()
 
@@ -65,9 +66,9 @@ class Provider(AbstractUser):
 
     def name_access(self):
         if self.access:
-            return ugettext("%(name)s (%(access)s)") \
-                % {'name': self.name(),
-                   'access': self.access.name()}
+            return ugettext("{name} ({access})").format(
+                name=self.name(),
+                access=self.access.name())
         else:
             return self.name()
 

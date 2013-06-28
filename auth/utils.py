@@ -61,11 +61,11 @@ def username_from_name(first_name, last_name):
 
     def jdoe(first, last):
         """ first name initial followed by last name format """
-        return "%s%s" % (first[0], last)
+        return "{}{}".format(first[0], last)
 
     def johndoe(first, last):
         """ first name followed by last name format """
-        return "%s%s" % (first, last)
+        return "{}{}".format(first, last)
 
     def iterate(username):
         """ adds and increment a counter at end of username """

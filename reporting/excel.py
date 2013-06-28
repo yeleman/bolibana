@@ -22,7 +22,7 @@ class ExcelTypeConverter(object):
     @classmethod
     def clean(cls, value):
         """ a stripped unicode """
-        return ("%s" % value).strip()
+        return "{}".format(value).strip()
 
     @classmethod
     def clean_str(cls, value):
@@ -35,7 +35,7 @@ class ExcelTypeConverter(object):
         if value in choicelist:
             return value
         else:
-            raise ValueError("%s not in %s" % (value, choicelist))
+            raise ValueError("{} not in {}".format(value, choicelist))
 
     @classmethod
     def LowerChoiceList(cls, value, choicelist):
@@ -43,8 +43,8 @@ class ExcelTypeConverter(object):
         if cls.clean_str(value) in choicelist:
             return cls.clean_str(value)
         else:
-            raise ValueError("%s not in %s" % (cls.clean_str(value),
-                                               choicelist))
+            raise ValueError("{} not in {}".format(cls.clean_str(value),
+                                                   choicelist))
 
     @classmethod
     def NormalizedChoiceList(cls, value, choicemap):
@@ -52,8 +52,8 @@ class ExcelTypeConverter(object):
         if cls.clean_str(value) in choicemap:
             return choicemap[cls.clean_str(value)]
         else:
-            raise ValueError("%s not in %s" % (cls.clean_str(value),
-                                               list(choicemap.keys())))
+            raise ValueError("{} not in {}".format(cls.clean_str(value),
+                                                   list(choicemap.keys())))
 
     @classmethod
     def NormalizedIntChoiceList(cls, value, choicelist):
@@ -61,8 +61,8 @@ class ExcelTypeConverter(object):
         if int(value) in choicelist:
             return int(value)
         else:
-            raise ValueError("%s not in %s" % (cls.clean_str(value),
-                                               choicelist))
+            raise ValueError("{} not in {}".format(cls.clean_str(value),
+                                                   choicelist))
 
 
 class ExcelFormField(object):
@@ -130,8 +130,8 @@ class ExcelForm(object):
             else:
                 self.ws = book.sheets()[0]
         except Exception as e:
-            logger.warning("Unable to read Excel Uploaded file %(path)s. "
-                           "Raised %(e)r" % {'path': self.filepath, 'e': e})
+            logger.warning("Unable to read Excel Uploaded file {path}. "
+                           "Raised {e}".format(path=self.filepath, e=e))
             self.errors.add("Impossible d'ouvrir le masque de saisie. "
                             "Le fichier est corrompu ou a été modifié.")
             return
@@ -186,8 +186,8 @@ class ExcelForm(object):
 
     def value_error(self, data, field, variable, exception):
         """ adds an error if data is not valid """
-        self.errors.add(_("%(data)s is not a valid data for %(field)s")
-                        % {'data': data, 'field': field.display_name()})
+        self.errors.add(_("{data} is not a valid data for %(field)s").format(
+                        data=data, field=field.display_name()))
 
     def is_valid(self, *args, **kwargs):
         """ [override] complete with no errors ? """

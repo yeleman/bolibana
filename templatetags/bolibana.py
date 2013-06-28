@@ -35,8 +35,7 @@ def phone_number_formatter(number):
 
     ind, clean_number = clean_phone_number(number)
     if ind:
-        return _("(%(ind)s) %(num)s") \
-            % {'ind': ind, 'num': format(clean_number)}
+        return _("({ind}) {num}").format(ind=ind, num=format(clean_number))
     return format(clean_number)
 
 
@@ -60,7 +59,7 @@ def formcategories(value):
     if value == 'all':
         return _("All Age")
     if value == 'all_over_five':
-        return "%s avec %s" % (formcategories('o5'), formcategories('pw'))
+        return "{} avec {}".format(formcategories('o5'), formcategories('pw'))
     return _("Default")
 
 
@@ -122,7 +121,7 @@ def number_format(value, precision=2, french=True):
         value = int(value)
     except:
         try:
-            format = '%.' + '%df' % precision
+            format = '{:{}f}'.format(precision)
             value = float(value)
         except:
             format = '%s'
@@ -143,7 +142,7 @@ def number_format(value, precision=2, french=True):
 @stringfilter
 def concat_strings(value, value2):
     try:
-        return "%s%s" % (value, value2)
+        return "{}{}".format(value, value2)
     except:
         return value
 

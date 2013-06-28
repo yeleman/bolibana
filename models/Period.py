@@ -223,7 +223,7 @@ class Period(models.Model):
 
     def name(self):
         try:
-            cls = eval("%sPeriod" % self.period_type.title())
+            cls = eval("{}Period".format(self.period_type.title()))
             return cls.objects.get(id=self.id).name()
         except:
             # TRANSLATORS: Django date format for Generic .name()
@@ -446,7 +446,7 @@ class WeekPeriod(Period):
 
     @property
     def pid(self):
-        return'W%s' % self.middle().strftime('%W-%Y')
+        return'W{}'.format(self.middle().strftime('%W-%Y'))
 
     def name(self):
         # Translators: Django's date format for WeekPeriod.name()
@@ -454,10 +454,10 @@ class WeekPeriod(Period):
 
     def full_name(self):
         # Translators: Week Full name representation: weeknum, start and end
-        return (ugettext("Week %(weeknum)s (%(start)s to %(end)s)")
-                % {'weeknum': date_format(self.middle(), ugettext("W")),
-                   'start': date_format(self.start_on, ugettext("d")),
-                   'end': date_format(self.end_on, ugettext("d F Y"))})
+        return ugettext("Week %(weeknum)s (%(start)s to %(end)s)".format(
+            weeknum=date_format(self.middle(), ugettext("W")),
+            start=date_format(self.start_on, ugettext("d")),
+            end=date_format(self.end_on, ugettext("d F Y"))))
 
     @classmethod
     def delta(self):
@@ -550,15 +550,15 @@ class QuarterPeriod(Period):
 
     @property
     def pid(self):
-        return 'Q%d.%s' % (self.quarter, self.middle().strftime('%Y'))
+        return 'Q{:d}.{}'.format((self.quarter, self.middle().strftime('%Y')))
 
     def name(self):
         # Translators: django date format for accompagning Quarter in Quarter.name()
         drepr = date_format(self.middle(), ugettext("Y"))
         # Translators: Quarter.name() repr using Quarter number and other
-        return (ugettext("Q%(quarter)s.%(year)s")
-                % {'year': drepr,
-                   'quarter': self.quarter})
+        return ugettext("Q%(quarter)s.%(year)s").format(
+            year=drepr,
+            quarter=self.quarter)
 
     def full_name(self):
         def ordinal(value):
@@ -567,31 +567,31 @@ class QuarterPeriod(Period):
             except ValueError:
                 return value
 
-            if value % 100//10 != 1:
+            if value % 100 // 10 != 1:
                 if value % 10 == 1:
                     # Translators: suffix for 1st
-                    ordval ="%d%s" % (value, ugettext("st"))
+                    ordval = "{:d}{}".format((value, ugettext("st")))
                 elif value % 10 == 2:
                     # Translators: suffix for 2nd
-                    ordval ="%d%s" % (value, ugettext("nd"))
+                    ordval = "{:d}{}".format((value, ugettext("nd")))
                 elif value % 10 == 3:
                     # Translators: suffix for 3rd
-                    ordval ="%d%s" % (value, ugettext("rd"))
+                    ordval = "{:d}{}".format((value, ugettext("rd")))
                 else:
                     # Translators: suffix for 4th
-                    ordval ="%d%s" % (value, ugettext("th"))
+                    ordval = "{:d}{}".format((value, ugettext("th")))
             else:
                 # Translators: suffix for 5th
-                ordval ="%d%s" % (value, ugettext("th"))
+                ordval = "{:d}{}".format((value, ugettext("th")))
 
             return ordval
 
         # Translators: Django's date format for QuarterPeriod.full_name()
-        return ("%(ordinal_quarter)s Quarter %(year)s (%(start)s to %(end)s)"
-                % {'ordinal_quarter': ordinal(self.quarter),
-                   'year': date_format(self.middle(), ugettext("Y")),
-                   'start': date_format(self.start_on, ugettext("F")),
-                   'end': date_format(self.end_on, ugettext("F Y"))})
+        return "%(ordinal_quarter)s Quarter %(year)s (%(start)s to %(end)s)".format(
+            ordinal_quarter=ordinal(self.quarter),
+            year=date_format(self.middle(), ugettext("Y")),
+            start=date_format(self.start_on, ugettext("F")),
+            end=date_format(self.end_on, ugettext("F Y")))
 
     @classmethod
     def delta(self):
@@ -623,8 +623,8 @@ class QuarterPeriod(Period):
         return (start, end)
 
     def strid(self):
-        return 'Q%s-%s' % (str(self.quarter).zfill(2),
-                           self.middle().strftime('%Y'))
+        return 'Q{}-{}'.format(str(self.quarter).zfill(2),
+                               self.middle().strftime('%Y'))
 
 
 class YearPeriod(Period):

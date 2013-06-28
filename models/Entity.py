@@ -45,14 +45,14 @@ class Entity(MPTTModel):
 
     def display_full_name(self):
         if self.parent:
-            return ugettext("%(name)s/%(parent)s") \
-                % {'name': self.display_name(),
-                   'parent': self.parent.display_name()}
+            return ugettext("%(name)s/%(parent)s").format(
+                name=self.display_name(),
+                parent=self.parent.display_name())
         return self.display_name()
 
     def display_code_name(self):
-        return ugettext("%(code)s/%(name)s") \
-            % {'code': self.slug, 'name': self.display_name()}
+        return ugettext("{code}/{name}").format(
+            code=self.slug, name=self.display_name())
 
     def parent_level(self):
         if self.parent:

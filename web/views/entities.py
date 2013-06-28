@@ -99,11 +99,11 @@ def add_edit_entity(request, entity_id=None, template='add_edit_entity.html'):
         if form.is_valid():
             entity = form.save()
             if entity_id:
-                message = _("Entity %(entity)s updated.") \
-                    % {'entity': entity.display_full_name()}
+                message = _("Entity {entity} updated.").format(
+                    entity=entity.display_full_name())
             else:
-                message = _("Entity %(entity)s created.") \
-                    % {'entity': entity.display_full_name()}
+                message = _("Entity %(entity)s created.").format(
+                    entity=entity.display_full_name())
             messages.success(request, message)
             return redirect('list_entities')
         else:

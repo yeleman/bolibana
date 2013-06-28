@@ -76,8 +76,8 @@ class Http500Middleware(object):
             #     pass
             logging.exception("500 Error raised.")
             # if not, display access_error and load it with exception details
-            message = "%s: %s" % (exception.__class__.__name__,
-                                  exception)
+            message = "{}: {}".format(exception.__class__.__name__,
+                                      exception)
             return access_error(request, message)
 
     def process_response(self, request, response):
