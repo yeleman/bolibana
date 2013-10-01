@@ -65,7 +65,7 @@ class EditProviderForm(forms.Form):
                                       for role
                                       in Role.objects.all().order_by('name')])
 
-    entity = TreeNodeChoiceField(queryset=Entity.tree.all(),
+    entity = TreeNodeChoiceField(queryset=Entity.objects.all(),
                                  level_indicator='---',
                                  label=ugettext_lazy("Entity"))
 
@@ -136,6 +136,9 @@ def add_edit_user(request, user_id=None, template='add_edit_provider.html'):
                 entity = form.cleaned_data.get('entity')
             access = Access.find_by(role, entity)
 
+            print(access)
+            print(access.id)
+
             if user_id:
                 provider = Provider.objects.get(id=user_id)
                 provider.access = access
@@ -146,11 +149,11 @@ def add_edit_user(request, user_id=None, template='add_edit_provider.html'):
                     form.cleaned_data.get('last_name'))
 
                 # generate password
-                password = random_password(username)
+                password = random_password()
 
                 # create Provider
                 provider = Provider.create_provider(username,
-                                                    'xx', access=[access])
+                                                    'xx', access=access)
                 provider.set_password(password)
             # we have a valid provider whatever the case. update details
             provider.first_name = form.cleaned_data.get('first_name')

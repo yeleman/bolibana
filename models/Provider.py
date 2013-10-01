@@ -83,10 +83,10 @@ class Provider(AbstractUser):
                         phone_number=None, access=None):
         """ shortcut creation of provider with its associated User """
         provider, created = cls.objects.get_or_create(username=username,
-                                                      password=password)
+                                                      password=password,
+                                                      access=access)
         provider.phone_number = phone_number
         provider.pwhash = cls.generate_hash(username, password)
-        provider.access = access
         provider.save()
         return provider
 

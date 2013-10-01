@@ -8,7 +8,7 @@ import unicodedata
 import random
 import re
 
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 
 PASSWORD_LENGTH = 8
 PASSWORD_LENGTH_SAMPLE = 4
@@ -43,7 +43,7 @@ def random_sample_password():
 
 
 def username_from_name(first_name, last_name):
-    """ available username to use on User forged from first and last name """
+    """ available username to use on get_user_model() forged from first and last name """
 
     def new_slug(text, salt=None):
         """ assemble text and salt providing optimum length """
@@ -57,7 +57,7 @@ def username_from_name(first_name, last_name):
 
     def is_available(username):
         """ DB check for username use """
-        return User.objects.filter(username=username).count() == 0
+        return get_user_model().objects.filter(username=username).count() == 0
 
     def jdoe(first, last):
         """ first name initial followed by last name format """

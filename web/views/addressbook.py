@@ -26,7 +26,7 @@ class AddressBookForm(forms.Form):
                              choices=[('', _("All"))] + [(role.slug, role.name)
                                                          for role in Role.objects.all()
                                                                          .order_by('name')])
-    entity = TreeNodeChoiceField(queryset=Entity.tree.all(),
+    entity = TreeNodeChoiceField(queryset=Entity.objects.all(),
                                  level_indicator='---',
                                  label=ugettext_lazy("Entity"))
 
