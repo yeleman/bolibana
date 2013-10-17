@@ -5,12 +5,12 @@
 from __future__ import (unicode_literals, absolute_import,
                         division, print_function)
 
+from py3compat import implements_to_string
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.utils.encoding import python_2_unicode_compatible
 
 
-@python_2_unicode_compatible
+@implements_to_string
 class EntityType(models.Model):
 
     class Meta:
@@ -18,8 +18,8 @@ class EntityType(models.Model):
         verbose_name = _("Entity Type")
         verbose_name_plural = _("Entity Types")
 
+    slug = models.SlugField(_("Slug"), max_length=15, primary_key=True)
     name = models.CharField(_("Name"), max_length=30)
-    slug = models.SlugField(_("Slug"), max_length=15, unique=True)
 
     def __str__(self):
         return self.name

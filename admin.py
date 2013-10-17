@@ -16,7 +16,7 @@ from bolibana.models.Provider import Provider
 class EntityAdmin(admin.ModelAdmin):
 
     list_display = ('slug', 'name', 'type', 'parent', 'parent_level')
-    list_filter = ('type', 'parent')
+    list_filter = ('type',)
     ordering = ('slug',)
     search_fields = ('slug', 'name')
 

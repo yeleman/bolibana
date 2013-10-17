@@ -6,11 +6,11 @@ from __future__ import (unicode_literals, absolute_import,
                         division, print_function)
 from datetime import datetime, date, timedelta
 
+from py3compat import implements_to_string
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _, ugettext
 from django.utils.dateformat import format as date_format
-from django.utils.encoding import python_2_unicode_compatible
 
 from bolibana.tools.utils import normalize_date
 from bolibana.reporting.utils import next_month
@@ -61,7 +61,7 @@ class CustomManager(models.Manager):
                                          .filter(period_type=Period.CUSTOM)
 
 
-@python_2_unicode_compatible
+@implements_to_string
 class Period(models.Model):
     ''' Represents a Period of time. Base class ; should not be used directly.
 

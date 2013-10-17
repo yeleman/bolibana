@@ -5,10 +5,10 @@
 from __future__ import (unicode_literals, absolute_import,
                         division, print_function)
 
+from py3compat import implements_to_string
 from django.db import models
 from django.db.models.query import QuerySet
 from django.utils.translation import ugettext_lazy as _
-from django.utils.encoding import python_2_unicode_compatible
 
 from bolibana.models.Provider import Provider
 
@@ -79,7 +79,7 @@ class CompleteManager(models.Manager):
             .filter(_status__in=complete_status())
 
 
-@python_2_unicode_compatible
+@implements_to_string
 class BaseReport(models.Model):
 
     STATUS_UNSAVED = 'STATUS_UNSAVED'

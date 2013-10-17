@@ -4,19 +4,17 @@
 
 from __future__ import (unicode_literals, absolute_import,
                         division, print_function)
-import six
 
+from py3compat import implements_to_string
 from django.db import models
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import ugettext_lazy as _, ugettext
-from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes import generic
-from django.utils.encoding import python_2_unicode_compatible
 
 from bolibana.models.Role import Role
+from bolibana.models.Entity import Entity
 
 
-@python_2_unicode_compatible
+@implements_to_string
 class Access(models.Model):
     """ Bundle of a Role for a target object. Usually an Entity.
 
@@ -25,15 +23,12 @@ class Access(models.Model):
 
     class Meta:
         app_label = 'bolibana'
-        unique_together = ('role', 'content_type', 'object_id')
+        unique_together = ('role', 'target')
         verbose_name = _("Access")
         verbose_name_plural = _("Access")
 
     role = models.ForeignKey(Role, verbose_name=_("Role"))
-    # entity
-    content_type = models.ForeignKey(ContentType)
-    object_id = models.PositiveIntegerField()
-    target = generic.GenericForeignKey('content_type', 'object_id')
+    target = models.ForeignKey(Entity, verbose_name=_("Entity"))
 
     def __str__(self):
         return self.name()
@@ -41,28 +36,18 @@ class Access(models.Model):
     def name(self):
         try:
             if getattr(self.target, 'level', -1) == 0:
-                if six.PY3:
-                    return self.role
-                else:
-                    return self.role.__unicode__()
+                return "{role}".format(role=self.role)
             else:
                 return ugettext("{role} on {target}").format(
-                    role=self.role, target=self.target)
+                    role=str(self.role), target=str(self.target))
         except ObjectDoesNotExist:
             return "*Invalid*"
 
     @classmethod
-    def target_data(cls, target):
-        ct = ContentType.objects.get_for_model(model=target.__class__)
-        oi = target.id
-        return (ct, oi)
-
-    @classmethod
     def find_by(cls, role, target):
-        ct, oi = cls.target_data(target)
         try:
-            return cls.objects.get(role=role, content_type=ct, object_id=oi)
+            return cls.objects.get(role=role, target=target)
         except cls.DoesNotExist:
-            access = cls(role=role, content_type=ct, object_id=oi)
+            access = cls(role=role, target=target)
             access.save()
             return access

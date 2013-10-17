@@ -5,13 +5,13 @@
 from __future__ import (unicode_literals, absolute_import,
                         division, print_function)
 
+from py3compat import implements_to_string
 from django.utils.translation import ugettext_lazy as _, ugettext
-from django.utils.encoding import python_2_unicode_compatible
 
 from bolibana.models.BaseReport import BaseReport
 
 
-@python_2_unicode_compatible
+@implements_to_string
 class IndividualReport(BaseReport):
 
     """ Applies to an unique target whose not going to be tracked.

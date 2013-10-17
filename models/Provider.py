@@ -5,10 +5,10 @@
 from __future__ import (unicode_literals, absolute_import,
                         division, print_function)
 
+from py3compat import implements_to_string
 from django.db import models
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.utils.translation import ugettext_lazy as _, ugettext
-from django.utils.encoding import python_2_unicode_compatible
 
 from bolibana.tools.utils import generate_user_hash
 from bolibana.models.Access import Access
@@ -21,7 +21,7 @@ class ActiveManager(models.Manager):
                                          .filter(is_active=True)
 
 
-@python_2_unicode_compatible
+@implements_to_string
 class Provider(AbstractUser):
 
     class Meta:

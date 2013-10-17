@@ -5,18 +5,18 @@
 from __future__ import (unicode_literals, absolute_import,
                         division, print_function)
 
+from py3compat import implements_to_string
 from django.dispatch import receiver
 from django.db import models
 from django.db.models.signals import pre_save, post_save
 from django.utils.translation import ugettext_lazy as _, ugettext
-from django.utils.encoding import python_2_unicode_compatible
 
 from bolibana.models.BaseReport import BaseReport
 from bolibana.models.Period import Period
 from bolibana.models.Entity import Entity
 
 
-@python_2_unicode_compatible
+@implements_to_string
 class Report(BaseReport):
 
     """ Applies to period-entity dependent report. """

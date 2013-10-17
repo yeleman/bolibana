@@ -6,8 +6,6 @@ from __future__ import (unicode_literals, absolute_import,
                         division, print_function)
 
 from django.db import models
-from django.dispatch import receiver
-from django.db.models.signals import pre_save
 from django.utils.translation import ugettext_lazy as _, ugettext
 from django.utils.encoding import python_2_unicode_compatible
 from mptt.models import MPTTModel, TreeForeignKey
@@ -24,16 +22,15 @@ class Entity(MPTTModel):
         verbose_name = _("Entity")
         verbose_name_plural = _("Entities")
 
+    slug = models.SlugField(_("Slug"), max_length=15, primary_key=True)
     name = models.CharField(_("Name"), max_length=50)
-    slug = models.SlugField(_("Slug"), max_length=15, unique=True)
     type = models.ForeignKey(EntityType, related_name='entities',
                              verbose_name=_("Type"))
-    phone_number = models.CharField(max_length=12, unique=True,
-                                    null=True, blank=True,
-                                    verbose_name=_("Phone Number"))
     parent = TreeForeignKey('self', null=True, blank=True,
                             related_name='children',
                             verbose_name=_("Parent"))
+    latitude = models.FloatField(blank=True, null=True)
+    longitude = models.FloatField(blank=True, null=True)
 
     objects = TreeManager()
 
@@ -45,7 +42,7 @@ class Entity(MPTTModel):
 
     def display_full_name(self):
         if self.parent:
-            return ugettext("%(name)s/%(parent)s").format(
+            return ugettext("{name}/{parent}").format(
                 name=self.display_name(),
                 parent=self.parent.display_name())
         return self.display_name()
@@ -59,9 +56,7 @@ class Entity(MPTTModel):
             return self.parent.type
         return self.parent
 
-
-@receiver(pre_save, sender=Entity)
-def pre_save_entity(sender, instance, **kwargs):
-    """ mark phone_number as None is not filled """
-    if instance.phone_number == "":
-        instance.phone_number = None
+    @property
+    def gps(self):
+        if self.latitude is not None and self.longitude is not None:
+            return "{lat},{lon}".format(lat=self.latitude, lon=self.longitude)
